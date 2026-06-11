@@ -1,5 +1,5 @@
 import { useState } from "react";
-import MarkdownPreview from "../components/MarkdownPreview";
+import { askGemini } from "../services/gemini";
 
 export default function Chat() {
   const [messages, setMessages] = useState([]);
@@ -12,10 +12,13 @@ export default function Chat() {
     setMessages(prev => [...prev, userMsg]);
     setInput("");
     setLoading(true);
-    setTimeout(() => {
-      setMessages(prev => [...prev, { role: "ai", text: "I'm your AI shopping assistant! Backend coming soon 🚀" }]);
-      setLoading(false);
-    }, 1500);
+    try {
+      const reply = await askGemini(`You are an AI shopping assistant. Answer this: ${input}`);
+      setMessages(prev => [...prev, { role: "ai", text: reply }]);
+    } catch {
+      setMessages(prev => [...prev, { role: "ai", text: "Something went wrong. Please try again!" }]);
+    }
+    setLoading(false);
   };
 
   return (
@@ -30,7 +33,7 @@ export default function Chat() {
         {loading && <div className="bg-white text-gray-400 px-4 py-3 rounded-2xl text-sm self-start shadow animate-pulse">Thinking...</div>}
       </div>
       <div className="flex gap-3">
-        <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && handleSend()} placeholder="Ask me anything..." className="flex-1 border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-400" />
+        <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && handleSend()} placeholder="Ask me anything about products..." className="flex-1 border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-400" />
         <button onClick={handleSend} className="bg-blue-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-600 transition">Send</button>
       </div>
     </div>
