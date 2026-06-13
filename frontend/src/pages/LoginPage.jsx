@@ -55,7 +55,7 @@ export default function LoginPage() {
               <SignIn
                 routing="hash"
                 signUpUrl="/sign-up"
-                afterSignInUrl="/onboarding"
+                forceRedirectUrl="/onboarding"
                 appearance={{
                   variables:{colorPrimary:"#7c3aed",borderRadius:"10px",fontSize:"13px"},
                   elements:{
@@ -72,7 +72,7 @@ export default function LoginPage() {
               />
             </div>
           </SignedOut>
-          <SignedIn><Navigate to="/onboarding" replace /></SignedIn>
+          <SignedIn><Navigate to={localStorage.getItem("pocketBuddyUser") ? "/dashboard" : "/onboarding"} replace /></SignedIn>
         </div>
 
         {/* RIGHT — Mascot + features */}

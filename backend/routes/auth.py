@@ -1,24 +1,34 @@
-from fastapi import APIRouter, HTTPException
-from fastapi import Body
-from models.user import OnboardingRequest
+from fastapi import APIRouter
+from pydantic import BaseModel
 from services.dynamodb import create_or_update_user, get_user
 
 router = APIRouter()
 
+class OnboardingRequest(BaseModel):
+    clerk_id: str
+    email: str
+    name: str
+    age: str
+    phone: str | None = None
+    gender: str | None = None
+    status: str | None = None
+    friend_name: str
+    emergency_contact: str
+    relationship: str
+    emergency_phone: str
 
-# POST /auth/onboarding — save full profile after Clerk sign-in
+
 @router.post("/onboarding")
-def onboarding(data: OnboardingRequest):
-    user = create_or_update_user(data.model_dump())
-    return {"message": "User saved", "user": user}
+def onboard_user(data: OnboardingRequest):
+    item = data.dict()
+    item["userId"] = item.pop("clerk_id")  # match DynamoDB partition key
+    create_or_update_user(item)
+    return {"message": "onboarding saved", "userId": item["userId"]}
 
 
-# GET /auth/profile/{clerk_id} — fetch profile by Clerk ID
 @router.get("/profile/{clerk_id}")
-def profile(clerk_id: str):
-    user = get_user(clerk_id)
-
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    return user
+def get_profile(clerk_id: str):
+    profile = get_user(clerk_id)
+    if not profile:
+        return {}
+    return profile
