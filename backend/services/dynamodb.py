@@ -107,25 +107,17 @@ def get_health_logs(user_id: str, limit: int = 7) -> list:
     )
     return response.get("Items", [])
 
-def get_health_log_today(user_id: str) -> dict:
-    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    response = health_table.get_item(
-        Key={"userId": user_id, "date": today}
-    )
-    return response.get("Item")
-
 def add_health_log(user_id: str, steps: int = None, calories: int = None, sleep_hours: float = None, note: str = ""):
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    existing = get_health_log_today(user_id) or {}
     item = {
         "userId":        user_id,
         "date":          today,
-        "steps":         str(steps) if steps is not None else existing.get("steps", ""),
-        "sleep_hours":   str(sleep_hours) if sleep_hours is not None else existing.get("sleep_hours", ""),
-        "water_glasses": existing.get("water_glasses", ""),
-        "heart_rate":    existing.get("heart_rate", ""),
-        "bmi":           existing.get("bmi", ""),
-        "habits":        existing.get("habits", {}),
+        "steps":         str(steps) if steps is not None else "",
+        "sleep_hours":   str(sleep_hours) if sleep_hours is not None else "",
+        "water_glasses": "",
+        "heart_rate":    "",
+        "bmi":           "",
+        "habits":        {},
         "updated_at":    datetime.now(timezone.utc).isoformat(),
     }
     health_table.put_item(Item=item)
