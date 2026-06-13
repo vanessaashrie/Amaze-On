@@ -1,1 +1,2 @@
-# Amaze-On
+#Pocket Buddy-  AI-powered Virtual Bestfriend
+A student's companion that acts like a virtual best friend. By combining academic deadlines, spending behavior, health metrics, emotional signals, and conversational memory, it proactively identifies stress patterns and provides personalized guidance before burnout occurs.Unlike traditional apps that solve one problem at a time, Pocket Ready creates a unified understanding of a student's life and turns fragmented data into meaningful support.
