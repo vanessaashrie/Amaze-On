@@ -17,6 +17,12 @@ dynamodb = boto3.resource(
 
 table = dynamodb.Table("AmazeOnUsers")
 
+app.include_router(
+    auth_router,
+    prefix="/auth",
+    tags=["Authentication"]
+)
+
 @app.get("/user/{user_id}")
 def get_user(user_id: str):
     response = table.get_item(
