@@ -39,7 +39,6 @@ export default function Money() {
     color: text, fontSize: "13px", outline: "none", boxSizing: "border-box",
   };
 
-  // Fetch transactions on load
   useEffect(() => {
     if (!user?.id) return;
     api.get(`/money/${user.id}`)
@@ -47,7 +46,6 @@ export default function Money() {
       .catch((err) => console.error("Failed to fetch transactions:", err));
   }, [user?.id]);
 
-  // Derived stats
   const totalSpent = transactions
     .filter((t) => t.type === "expense")
     .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
@@ -56,7 +54,6 @@ export default function Money() {
     .filter((t) => t.type === "income")
     .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
 
-  // Pie data from real transactions
   const pieData = Object.entries(
     transactions
       .filter((t) => t.type === "expense")
@@ -78,7 +75,6 @@ export default function Money() {
         type: form.type,
       });
 
-      // Refresh transactions
       const res = await api.get(`/money/${user.id}`);
       setTransactions(res.data.transactions || []);
 
@@ -96,7 +92,10 @@ export default function Money() {
     <DashboardLayout>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
         <div>
-          <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700", color: text }}>💰 Money Tracker</h2>
+          <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700", color: text, display: "flex", alignItems: "center", gap: "10px" }}>
+            <img src="/money.png" alt="money" style={{ width: "32px", height: "32px", objectFit: "contain" }} />
+            Money Tracker
+          </h2>
           <p style={{ margin: 0, fontSize: "13px", color: muted }}>Track your income, expenses and budget.</p>
         </div>
         <button onClick={() => setShowForm(!showForm)} style={{
@@ -138,7 +137,6 @@ export default function Money() {
         </div>
       )}
 
-      {/* Stat Cards */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "16px", marginBottom: "20px" }}>
         {[
           { label: "Total Spent", value: `₹${totalSpent.toLocaleString("en-IN")}`, icon: "📤", color: "#ef4444" },
@@ -205,7 +203,6 @@ export default function Money() {
         </div>
       </div>
 
-      {/* All Transactions */}
       <div style={card}>
         <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>All Transactions</h3>
         {transactions.length === 0 && (

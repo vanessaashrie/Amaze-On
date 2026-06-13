@@ -18,7 +18,7 @@ export default function Goals() {
 
   const [goals, setGoals] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ title: "", category: "Finance", icon: "🎯", due_date: "", target: "" });
+  const [form, setForm] = useState({ title: "", category: "Finance", due_date: "", target: "" });
   const [loading, setLoading] = useState(false);
   const [updateInputs, setUpdateInputs] = useState({});
 
@@ -36,7 +36,6 @@ export default function Goals() {
     color: text, fontSize: "13px", outline: "none", boxSizing: "border-box",
   };
 
-  // Fetch goals on load
   useEffect(() => {
     if (!user?.id) return;
     api.get(`/goals/${user.id}`)
@@ -56,14 +55,14 @@ export default function Goals() {
         clerk_id: user.id,
         title: form.title,
         category: form.category,
-        icon: form.icon,
+        icon: "goals",
         target: form.target.toString() || "100",
         current: "0",
         due_date: form.due_date,
       });
       await refreshGoals();
       setShowForm(false);
-      setForm({ title: "", category: "Finance", icon: "🎯", due_date: "", target: "" });
+      setForm({ title: "", category: "Finance", due_date: "", target: "" });
     } catch (err) {
       console.error("Failed to add goal:", err);
       alert("Failed to add goal");
@@ -97,7 +96,10 @@ export default function Goals() {
     <DashboardLayout>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
         <div>
-          <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700", color: text }}>🎯 Goals</h2>
+          <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700", color: text, display: "flex", alignItems: "center", gap: "10px" }}>
+            <img src="/goals.png" alt="goals" style={{ width: "32px", height: "32px", objectFit: "contain" }} />
+            Goals
+          </h2>
           <p style={{ margin: 0, fontSize: "13px", color: muted }}>Set, track and achieve your personal goals.</p>
         </div>
         <button onClick={() => setShowForm(!showForm)} style={{
@@ -136,7 +138,6 @@ export default function Goals() {
         </div>
       )}
 
-      {/* Active Goals Grid */}
       {activeGoals.length === 0 && (
         <p style={{ color: muted, fontSize: "13px", marginBottom: "20px" }}>No active goals yet. Add one above!</p>
       )}
@@ -149,7 +150,9 @@ export default function Goals() {
             <div key={goal.goal_id} style={card}>
               <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "16px" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                  <div style={{ width: "44px", height: "44px", borderRadius: "12px", background: color + "20", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px" }}>{goal.icon}</div>
+                  <div style={{ width: "44px", height: "44px", borderRadius: "12px", background: color + "20", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <img src="/goals.png" alt="goal" style={{ width: "26px", height: "26px", objectFit: "contain" }} />
+                  </div>
                   <div>
                     <p style={{ margin: "0 0 2px", fontSize: "14px", fontWeight: "600", color: text }}>{goal.title}</p>
                     <p style={{ margin: 0, fontSize: "11px", color: muted }}>{goal.category} · Due {goal.due_date || "—"}</p>
@@ -185,7 +188,6 @@ export default function Goals() {
         })}
       </div>
 
-      {/* Completed Goals */}
       <div style={card}>
         <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>🏆 Completed Goals</h3>
         {completedGoals.length === 0 && (
@@ -193,7 +195,9 @@ export default function Goals() {
         )}
         {completedGoals.map((goal) => (
           <div key={goal.goal_id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px 0", borderBottom: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}` }}>
-            <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: "#10b98120", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>{goal.icon}</div>
+            <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: "#10b98120", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <img src="/goals.png" alt="goal" style={{ width: "22px", height: "22px", objectFit: "contain" }} />
+            </div>
             <div style={{ flex: 1 }}>
               <p style={{ margin: "0 0 2px", fontSize: "13px", fontWeight: "500", color: text }}>{goal.title}</p>
               <p style={{ margin: 0, fontSize: "11px", color: muted }}>Completed · {goal.due_date || "—"}</p>
