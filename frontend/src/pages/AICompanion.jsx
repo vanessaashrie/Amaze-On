@@ -42,31 +42,45 @@ export default function AICompanion() {
     setMessages(prev => [...prev, { from: "user", text: msg }]);
     setLoading(true);
 
-    try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+  try {
+    const res = await fetch(
+      "http://localhost:8000/companion/chat",
+      {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
-          model: "claude-sonnet-4-6",
-          max_tokens: 1000,
-          system: `You are ${friendName}, a warm, caring AI best friend for a student/young professional. You help with personal finance, health, mental wellness and motivation. Keep responses friendly, concise and supportive. Use emojis occasionally. Address the user warmly.`,
-          messages: [
-            ...messages.filter(m => m.from !== "ai" || messages.indexOf(m) > 0).map(m => ({
-              role: m.from === "user" ? "user" : "assistant",
-              content: m.text
-            })),
-            { role: "user", content: msg }
-          ]
-        })
-      });
-      const data = await res.json();
-      const reply = data.content?.[0]?.text || "I'm here for you! 💜";
-      setMessages(prev => [...prev, { from: "ai", text: reply }]);
-    } catch {
-      setMessages(prev => [...prev, { from: "ai", text: "Oops, something went wrong. Try again! 💜" }]);
-    }
-    setLoading(false);
-  };
+          userId: user.userId,
+          message: msg,
+          history: messages,
+        }),
+      }
+    );
+
+    const data = await res.json();
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        from: "ai",
+        text: data.reply || "I'm here for you! 💜",
+      },
+    ]);
+  } catch (error) {
+    console.error(error);
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        from: "ai",
+        text: "Oops, something went wrong. Try again! 💜",
+      },
+    ]);
+  }
+
+  setLoading(false);
+};
 
   const text = dark ? "#f1f5f9" : "#1f2937";
   const muted = dark ? "#94a3b8" : "#6b7280";
