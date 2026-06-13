@@ -33,7 +33,6 @@ export default function Journal() {
   const muted = dark ? "#94a3b8" : "#6b7280";
   const inputBg = dark ? "#0f0f1a" : "#f9fafb";
 
-  // Fetch past entries on load
   useEffect(() => {
     if (!user?.id) return;
     api.get(`/journal/${user.id}`)
@@ -58,7 +57,6 @@ export default function Journal() {
       setSelectedMood(null);
       setTimeout(() => setSubmitted(false), 2000);
 
-      // Refresh past entries
       const res = await api.get(`/journal/${user.id}`);
       setPastEntries(res.data.entries || []);
 
@@ -73,8 +71,9 @@ export default function Journal() {
   return (
     <DashboardLayout>
       <div style={{ marginBottom: "24px" }}>
-        <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700", color: text }}>
-          📓 My Journal
+        <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700", color: text, display: "flex", alignItems: "center", gap: "10px" }}>
+          <img src="/journal.png" alt="journal" style={{ width: "32px", height: "32px", objectFit: "contain" }} />
+          My Journal
         </h2>
         <p style={{ margin: 0, fontSize: "13px", color: muted }}>
           Write your thoughts and track your mood.

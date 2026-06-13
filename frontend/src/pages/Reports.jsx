@@ -33,7 +33,10 @@ export default function Reports() {
   return (
     <DashboardLayout>
       <div style={{ marginBottom: "24px" }}>
-        <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700", color: text }}>📊 Reports</h2>
+        <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700", color: text, display: "flex", alignItems: "center", gap: "10px" }}>
+          <img src="/reports.png" alt="reports" style={{ width: "32px", height: "32px", objectFit: "contain" }} />
+          Reports
+        </h2>
         <p style={{ margin: 0, fontSize: "13px", color: muted }}>Your monthly overview of finances, health and wellness.</p>
       </div>
 
@@ -57,7 +60,6 @@ export default function Reports() {
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "20px", marginBottom: "20px" }}>
-        {/* Spending vs Saving */}
         <div style={card}>
           <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>Spending vs Saving Trend</h3>
           <ResponsiveContainer width="100%" height={200}>
@@ -71,7 +73,6 @@ export default function Reports() {
           </ResponsiveContainer>
         </div>
 
-        {/* Wellness Radar */}
         <div style={card}>
           <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>Wellness Score</h3>
           <ResponsiveContainer width="100%" height={200}>
@@ -84,7 +85,6 @@ export default function Reports() {
         </div>
       </div>
 
-      {/* Insights */}
       <div style={card}>
         <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>🤖 AI Monthly Insights</h3>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
