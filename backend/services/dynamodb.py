@@ -1,9 +1,10 @@
-import boto3
-import os
+from utils.aws import table
 
-dynamodb = boto3.resource(
-    "dynamodb",
-    region_name=os.getenv("AWS_REGION")
-)
+def create_or_update_user(data: dict):
+    table.put_item(Item=data)
+    return data
 
-users_table = dynamodb.Table("AmazeOnUsers")
+
+def get_user(clerk_id: str):
+    response = table.get_item(Key={"clerk_id": clerk_id})
+    return response.get("Item")

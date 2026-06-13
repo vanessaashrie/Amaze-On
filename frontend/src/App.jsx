@@ -19,14 +19,33 @@ function App() {
     <BrowserRouter>
       <Routes>
 
+        {/* If already signed in, skip login → go to onboarding (or dashboard later) */}
         <Route
           path="/"
-          element={<LoginPage />}
+          element={
+            <>
+              <SignedIn>
+                <Navigate to="/onboarding" replace />
+              </SignedIn>
+              <SignedOut>
+                <LoginPage />
+              </SignedOut>
+            </>
+          }
         />
 
         <Route
           path="/sign-up"
-          element={<SignUpPage />}
+          element={
+            <>
+              <SignedIn>
+                <Navigate to="/onboarding" replace />
+              </SignedIn>
+              <SignedOut>
+                <SignUpPage />
+              </SignedOut>
+            </>
+          }
         />
 
         <Route

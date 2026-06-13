@@ -1,0 +1,19 @@
+[33m327a958[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{0}: reset: moving to origin/main
+[33mfd3d3c3[m HEAD@{1}: reset: moving to origin/main
+[33me046665[m HEAD@{2}: pull origin main: Merge made by the 'ort' strategy.
+[33m2e069e5[m HEAD@{3}: commit: Add backend modules
+[33m169e48d[m HEAD@{4}: rebase (finish): returning to refs/heads/main
+[33m169e48d[m HEAD@{5}: rebase (continue): Update backend and docker configuration
+[33mb372ba0[m HEAD@{6}: rebase (continue): Add project description
+[33ma882562[m HEAD@{7}: pull origin main: Fast-forward
+[33m9fc59bb[m HEAD@{8}: pull origin main --rebase (start): checkout 9fc59bbcaae6e8bd27abe66d7b27d81a975c6fe1
+[33m00b82c8[m HEAD@{9}: commit: Update backend and docker configuration
+[33m99f409d[m HEAD@{10}: commit: Add project description
+[33m4bcf846[m HEAD@{11}: commit: Integrate DynamoDB with FastAPI
+[33me9f3f6b[m HEAD@{12}: pull origin main --allow-unrelated-histories: Merge made by the 'ort' strategy.
+[33m9bd60b3[m HEAD@{13}: commit: AWS integration complete
+[33m01d6682[m HEAD@{14}: Branch: renamed refs/heads/main to refs/heads/main
+[33m01d6682[m HEAD@{16}: commit: FastAPI + React + Docker
+[33m9561a93[m HEAD@{17}: Branch: renamed refs/heads/main to refs/heads/main
+[33m9561a93[m HEAD@{19}: commit: setup (FastAPI + React)
+[33me4d1fba[m HEAD@{20}: clone: from https://github.com/vanessaashrie/Amaze-On.git
