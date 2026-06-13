@@ -1,252 +1,181 @@
-import { useState } from "react";
-import { useUser } from "@clerk/clerk-react";
-import { useNavigate } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+import { useTheme } from "../components/ThemeContext";
+import DashboardLayout from "../components/DashboardLayout";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const suggestions = [
+  "How can I save more money?",
+  "I'm feeling stressed today",
+  "Help me plan my week",
+  "Give me a motivational quote",
+];
 
-export default function OnboardingPage() {
-  const { user } = useUser();
-  const navigate = useNavigate();
-
-  const [form, setForm] = useState({
-    name: "",
-    age: "",
-    phone: "",
-    gender: "",
-    status: "",
-    friendName: "",
-    emergencyContact: "",
-    relationship: "",
-    emergencyPhone: "",
-  });
-
+export default function AICompanion() {
+  const { dark } = useTheme();
+  const [messages, setMessages] = useState([
+    { from: "ai", text: "Hey! I'm Nova, your AI best friend 💜 How are you feeling today? I'm here to help with your finances, health, or just to chat!" }
+  ]);
+  const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const bottomRef = useRef(null);
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const user = JSON.parse(localStorage.getItem("pocketBuddyUser") || "{}");
+  const friendName = user.friend_name || user.friendName || "Nova";
 
-  const handleSubmit = async () => {
-    if (!user?.id) {
-      setError("User not authenticated. Please login again.");
-      return;
-    }
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
+  const sendMessage = async (text) => {
+    const msg = text || input.trim();
+    if (!msg) return;
+    setInput("");
+    setMessages(prev => [...prev, { from: "user", text: msg }]);
     setLoading(true);
-    setError("");
-
-    const payload = {
-      clerk_id: user.id,
-      email: user.primaryEmailAddress?.emailAddress || "",
-      name: form.name,
-      age: form.age,           // keep as string — DynamoDB Decimal issues with numbers
-      phone: form.phone,
-      gender: form.gender,
-      status: form.status,
-      friend_name: form.friendName,
-      emergency_contact: form.emergencyContact,
-      relationship: form.relationship,
-      emergency_phone: form.emergencyPhone,
-    };
 
     try {
-      const res = await fetch(
-        `${BACKEND_URL}/auth/onboarding`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        }
-      );
-
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-6",
+          max_tokens: 1000,
+          system: `You are ${friendName}, a warm, caring AI best friend for a student/young professional. You help with personal finance, health, mental wellness and motivation. Keep responses friendly, concise and supportive. Use emojis occasionally. Address the user warmly.`,
+          messages: [
+            ...messages.filter(m => m.from !== "ai" || messages.indexOf(m) > 0).map(m => ({
+              role: m.from === "user" ? "user" : "assistant",
+              content: m.text
+            })),
+            { role: "user", content: msg }
+          ]
+        })
+      });
       const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.detail || "Failed to save profile");
-      }
-
-      localStorage.setItem(
-        "pocketBuddyUser",
-        JSON.stringify(payload)
-      );
-
-      navigate("/dashboard");
-
-    } catch (err) {
-      setError(err.message || "Server error");
-    } finally {
-      setLoading(false);
+      const reply = data.content?.[0]?.text || "I'm here for you! 💜";
+      setMessages(prev => [...prev, { from: "ai", text: reply }]);
+    } catch {
+      setMessages(prev => [...prev, { from: "ai", text: "Oops, something went wrong. Try again! 💜" }]);
     }
+    setLoading(false);
   };
 
-  const input = {
-    width: "100%",
-    padding: "12px 16px",
-    borderRadius: "10px",
-    border: "1.5px solid #e5e7eb",
-    fontSize: "14px",
-    outline: "none",
-    boxSizing: "border-box",
-    color: "#1f2937",
-    background: "white",
-  };
-
-  const label = {
-    fontSize: "13px",
-    color: "#6b7280",
-    marginBottom: "6px",
-    display: "block",
-    fontWeight: "500",
-  };
-
-  const sectionTitle = {
-    fontSize: "15px",
-    fontWeight: "700",
-    color: "#7c3aed",
-    marginBottom: "16px",
-    marginTop: "24px",
+  const text = dark ? "#f1f5f9" : "#1f2937";
+  const muted = dark ? "#94a3b8" : "#6b7280";
+  const card = {
+    background: dark ? "#1a1a2e" : "#ffffff",
+    borderRadius: "16px",
+    border: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`,
   };
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      background: "#f0eeff",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: "24px"
-    }}>
-      <div style={{
-        width: "100%",
-        maxWidth: "700px",
-        background: "white",
-        borderRadius: "24px",
-        boxShadow: "0 20px 60px rgba(0,0,0,0.08)",
-        padding: "48px"
-      }}>
-
-        {/* Header */}
-        <div style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: "20px"
-        }}>
-          <button onClick={() => navigate("/")}
-            style={{ background: "none", border: "none", fontSize: "20px" }}>
-            ←
-          </button>
-          <div style={{ fontWeight: "700" }}>
-            Pocket Buddy 💜
-          </div>
-        </div>
-
-        <h1>Let's get to know you 🌱</h1>
-
-        {/* Basic Info */}
-        <p style={sectionTitle}>Basic Information</p>
-
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-
-          <div>
-            <label style={label}>Full Name</label>
-            <input name="name" value={form.name} onChange={handleChange} style={input} />
-          </div>
-
-          <div>
-            <label style={label}>Age</label>
-            <input name="age" value={form.age} onChange={handleChange} style={input} />
-          </div>
-
-          <div>
-            <label style={label}>Phone</label>
-            <input name="phone" value={form.phone} onChange={handleChange} style={input} />
-          </div>
-
-        </div>
-
-        {/* More Info */}
-        <p style={sectionTitle}>More About You</p>
-
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-
-          <select name="gender" value={form.gender} onChange={handleChange} style={input}>
-            <option value="">Gender</option>
-            <option>Male</option>
-            <option>Female</option>
-            <option>Other</option>
-          </select>
-
-          <select name="status" value={form.status} onChange={handleChange} style={input}>
-            <option value="">Status</option>
-            <option>Student</option>
-            <option>Working</option>
-          </select>
-
-        </div>
-
-        {/* AI Friend */}
-        <p style={sectionTitle}>AI Companion</p>
-
-        <input
-          name="friendName"
-          value={form.friendName}
-          onChange={handleChange}
-          placeholder="Name your AI friend"
-          style={input}
-        />
-
-        {/* Emergency */}
-        <p style={sectionTitle}>Emergency Contact</p>
-
-        <input
-          name="emergencyContact"
-          value={form.emergencyContact}
-          onChange={handleChange}
-          placeholder="Contact name"
-          style={input}
-        />
-
-        <input
-          name="relationship"
-          value={form.relationship}
-          onChange={handleChange}
-          placeholder="Relationship"
-          style={input}
-        />
-
-        <input
-          name="emergencyPhone"
-          value={form.emergencyPhone}
-          onChange={handleChange}
-          placeholder="Emergency phone"
-          style={input}
-        />
-
-        {/* Submit */}
-        <button
-          onClick={handleSubmit}
-          disabled={loading}
-          style={{
-            width: "100%",
-            marginTop: "24px",
-            padding: "14px",
-            background: loading ? "#a78bfa" : "#7c3aed",
-            color: "white",
-            border: "none",
-            borderRadius: "10px",
-            cursor: loading ? "not-allowed" : "pointer"
-          }}
-        >
-          {loading ? "Saving..." : "Continue →"}
-        </button>
-
-        {error && (
-          <p style={{ color: "red", marginTop: "10px", textAlign: "center" }}>
-            {error}
-          </p>
-        )}
-
+    <DashboardLayout>
+      <div style={{ marginBottom: "20px" }}>
+        <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700", color: text }}>🤖 AI Companion</h2>
+        <p style={{ margin: 0, fontSize: "13px", color: muted }}>Chat with {friendName}, your personal AI best friend.</p>
       </div>
-    </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: "20px", height: "calc(100vh - 220px)" }}>
+
+        {/* Chat */}
+        <div style={{ ...card, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+
+          {/* Chat Header */}
+          <div style={{ padding: "16px 20px", borderBottom: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`, display: "flex", alignItems: "center", gap: "12px" }}>
+            <div style={{ width: "42px", height: "42px", borderRadius: "50%", background: "#b8f5d0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px" }}>🌱</div>
+            <div>
+              <p style={{ margin: 0, fontSize: "14px", fontWeight: "600", color: text }}>{friendName}</p>
+              <p style={{ margin: 0, fontSize: "11px", color: "#10b981" }}>● Online — always here for you</p>
+            </div>
+          </div>
+
+          {/* Messages */}
+          <div style={{ flex: 1, overflowY: "auto", padding: "20px", display: "flex", flexDirection: "column", gap: "12px" }}>
+            {messages.map((msg, i) => (
+              <div key={i} style={{ display: "flex", justifyContent: msg.from === "user" ? "flex-end" : "flex-start", gap: "8px", alignItems: "flex-end" }}>
+                {msg.from === "ai" && (
+                  <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#b8f5d0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", flexShrink: 0 }}>🌱</div>
+                )}
+                <div style={{
+                  maxWidth: "70%", padding: "12px 16px", borderRadius: msg.from === "user" ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
+                  background: msg.from === "user" ? "#7c3aed" : dark ? "#2d2d44" : "#f5f3ff",
+                  color: msg.from === "user" ? "white" : text,
+                  fontSize: "13px", lineHeight: "1.6"
+                }}>
+                  {msg.text}
+                </div>
+              </div>
+            ))}
+            {loading && (
+              <div style={{ display: "flex", gap: "8px", alignItems: "flex-end" }}>
+                <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#b8f5d0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px" }}>🌱</div>
+                <div style={{ padding: "12px 16px", borderRadius: "18px 18px 18px 4px", background: dark ? "#2d2d44" : "#f5f3ff", fontSize: "13px", color: muted }}>
+                  typing...
+                </div>
+              </div>
+            )}
+            <div ref={bottomRef} />
+          </div>
+
+          {/* Input */}
+          <div style={{ padding: "16px 20px", borderTop: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`, display: "flex", gap: "10px" }}>
+            <input
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && sendMessage()}
+              placeholder={`Message ${friendName}...`}
+              style={{
+                flex: 1, padding: "12px 16px", borderRadius: "12px",
+                border: `1.5px solid ${dark ? "#2d2d44" : "#e5e7eb"}`,
+                background: dark ? "#0f0f1a" : "#f9fafb",
+                color: text, fontSize: "13px", outline: "none"
+              }}
+            />
+            <button
+              onClick={() => sendMessage()}
+              style={{ padding: "12px 20px", borderRadius: "12px", border: "none", background: "#7c3aed", color: "white", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
+            >Send</button>
+          </div>
+        </div>
+
+        {/* Right Panel */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+
+          {/* Quick Suggestions */}
+          <div style={{ ...card, padding: "16px" }}>
+            <p style={{ margin: "0 0 12px", fontSize: "13px", fontWeight: "600", color: text }}>Quick Questions</p>
+            {suggestions.map(s => (
+              <button key={s} onClick={() => sendMessage(s)} style={{
+                width: "100%", marginBottom: "8px", padding: "10px 12px",
+                borderRadius: "10px", border: `1px solid ${dark ? "#2d2d44" : "#e9d5ff"}`,
+                background: dark ? "#0f0f1a" : "#faf5ff",
+                color: dark ? "#a78bfa" : "#7c3aed",
+                fontSize: "12px", cursor: "pointer", textAlign: "left", fontWeight: "500"
+              }}>{s}</button>
+            ))}
+          </div>
+
+          {/* Mood Check */}
+          <div style={{ ...card, padding: "16px" }}>
+            <p style={{ margin: "0 0 12px", fontSize: "13px", fontWeight: "600", color: text }}>How's your day?</p>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+              {[
+                { emoji: "😁", label: "Great" },
+                { emoji: "🙂", label: "Good" },
+                { emoji: "😐", label: "Okay" },
+                { emoji: "😞", label: "Bad" },
+              ].map(({ emoji, label }) => (
+                <button key={label} onClick={() => sendMessage(`I'm feeling ${label.toLowerCase()} today`)} style={{
+                  padding: "10px", borderRadius: "10px", border: `1px solid ${dark ? "#2d2d44" : "#e5e7eb"}`,
+                  background: dark ? "#0f0f1a" : "#f9fafb",
+                  cursor: "pointer", fontSize: "18px", display: "flex", flexDirection: "column", alignItems: "center", gap: "4px"
+                }}>
+                  {emoji}
+                  <span style={{ fontSize: "10px", color: muted }}>{label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </DashboardLayout>
   );
 }
