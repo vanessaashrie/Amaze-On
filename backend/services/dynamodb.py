@@ -20,6 +20,7 @@ money_table   = dynamodb.Table("Money")
 health_table  = dynamodb.Table("Health")
 goals_table   = dynamodb.Table("Goals")
 
+
 def create_or_update_user(data: dict):
     users_table.put_item(Item=data)
     return data
@@ -27,6 +28,7 @@ def create_or_update_user(data: dict):
 def get_user(user_id: str):
     response = users_table.get_item(Key={"userId": user_id})
     return response.get("Item")
+
 
 def create_journal_entry(data: dict) -> dict:
     item = {
@@ -47,6 +49,7 @@ def get_journal_entries(user_id: str) -> list:
     items = response.get("Items", [])
     return sorted(items, key=lambda x: x.get("timestamp", ""), reverse=True)
 
+
 def create_transaction(data: dict) -> dict:
     item = {
         "userId":         data["userId"],
@@ -66,6 +69,19 @@ def get_transactions(user_id: str) -> list:
     )
     items = response.get("Items", [])
     return sorted(items, key=lambda x: x.get("date", ""), reverse=True)
+
+def add_transaction(user_id: str, amount: float, category: str, description: str, transaction_type: str = "expense"):
+    item = {
+        "userId":         user_id,
+        "transaction_id": str(uuid.uuid4()),
+        "date":           datetime.now(timezone.utc).isoformat(),
+        "name":           description,
+        "amount":         str(amount),
+        "category":       category,
+        "type":           transaction_type,
+    }
+    money_table.put_item(Item=item)
+
 
 def save_health_log(data: dict) -> dict:
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
@@ -97,6 +113,23 @@ def get_health_log_today(user_id: str) -> dict:
         Key={"userId": user_id, "date": today}
     )
     return response.get("Item")
+
+def add_health_log(user_id: str, steps: int = None, calories: int = None, sleep_hours: float = None, note: str = ""):
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    existing = get_health_log_today(user_id) or {}
+    item = {
+        "userId":        user_id,
+        "date":          today,
+        "steps":         str(steps) if steps is not None else existing.get("steps", ""),
+        "sleep_hours":   str(sleep_hours) if sleep_hours is not None else existing.get("sleep_hours", ""),
+        "water_glasses": existing.get("water_glasses", ""),
+        "heart_rate":    existing.get("heart_rate", ""),
+        "bmi":           existing.get("bmi", ""),
+        "habits":        existing.get("habits", {}),
+        "updated_at":    datetime.now(timezone.utc).isoformat(),
+    }
+    health_table.put_item(Item=item)
+
 
 def create_goal(data: dict) -> dict:
     item = {
