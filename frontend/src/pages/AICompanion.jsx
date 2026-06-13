@@ -11,15 +11,16 @@ const suggestions = [
 
 export default function AICompanion() {
   const { dark } = useTheme();
+
+  const user = JSON.parse(localStorage.getItem("pocketBuddyUser") || "{}");
+  const friendName = user.friend_name || user.friendName || "Nova";
+
   const [messages, setMessages] = useState([
-    { from: "ai", text: "Hey! I'm Nova, your AI best friend 💜 How are you feeling today? I'm here to help with your finances, health, or just to chat!" }
+    { from: "ai", text: `Hey! I'm ${friendName}, your AI best friend 💜 How are you feeling today? I'm here to help with your finances, health, or just to chat!` }
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef(null);
-
-  const user = JSON.parse(localStorage.getItem("pocketBuddyUser") || "{}");
-  const friendName = user.friendName || "Nova";
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
