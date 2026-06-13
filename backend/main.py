@@ -12,10 +12,14 @@ app = FastAPI()
 
 dynamodb = boto3.resource(
     "dynamodb",
-    region_name="eu-north-1"
+    region_name=REGION
 )
 
-table = dynamodb.Table("AmazeOnUsers")
+table = dynamodb.Table(TABLE_NAME)
+
+@app.get("/")
+def home():
+    return {"message": "Backend is running 🚀"}
 
 app.include_router(
     auth_router,
