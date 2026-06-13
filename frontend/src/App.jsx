@@ -1,20 +1,51 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Home from "./pages/Home";
-import Sustainability from "./pages/Sustainability";
-import Reviews from "./pages/Reviews";
-import Chat from "./pages/Chat";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
-export default function App() {
+import {
+  SignedIn,
+  SignedOut,
+} from "@clerk/clerk-react";
+
+import LoginPage from "./pages/LoginPage";
+import OnboardingPage from "./pages/OnboardingPage";
+import SignUpPage from "./pages/SignUpPage";
+
+function App() {
   return (
     <BrowserRouter>
-      <Navbar />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/sustainability" element={<Sustainability />} />
-        <Route path="/reviews" element={<Reviews />} />
-        <Route path="/chat" element={<Chat />} />
+
+        <Route
+          path="/"
+          element={<LoginPage />}
+        />
+
+        <Route
+          path="/sign-up"
+          element={<SignUpPage />}
+        />
+
+        <Route
+          path="/onboarding"
+          element={
+            <>
+              <SignedIn>
+                <OnboardingPage />
+              </SignedIn>
+              <SignedOut>
+                <Navigate to="/" replace />
+              </SignedOut>
+            </>
+          }
+        />
+
       </Routes>
     </BrowserRouter>
   );
 }
+
+export default App;
