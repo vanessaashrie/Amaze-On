@@ -59,7 +59,6 @@ export default function SignUpPage() {
         .cl-footerActionText, .cl-footerActionLink {
           font-size: 14px !important;
         }
-        /* Kill Clerk's internal top padding that causes the gap */
         .cl-main {
           padding-top: 0 !important;
           margin-top: 0 !important;
@@ -142,11 +141,13 @@ export default function SignUpPage() {
               </p>
             </div>
 
-            {/* Clerk form — no extra wrappers adding space */}
+            {/* Clerk form */}
             <SignUp
-              routing="hash"
+              routing="path"
+              path="/sign-up"
               signInUrl="/"
               forceRedirectUrl="/onboarding"
+              afterSignUpUrl="/onboarding"
               appearance={{
                 variables: {
                   colorPrimary: "#7c3aed",
