@@ -3,14 +3,14 @@ import { useTheme } from "./ThemeContext";
 import { useUser } from "@clerk/clerk-react";
 
 const navItems = [
-  { icon: "🏠", label: "Dashboard", path: "/dashboard" },
-  { icon: "📓", label: "Journal", path: "/journal" },
-  { icon: "💰", label: "Money", path: "/money" },
-  { icon: "❤️", label: "Health", path: "/health" },
-  { icon: "🤖", label: "AI Companion", path: "/ai-companion" },
-  { icon: "📊", label: "Reports", path: "/reports" },
-  { icon: "🎯", label: "Goals", path: "/goals" },
-  { icon: "⚙️", label: "Settings", path: "/settings" },
+  { icon: "/home.png", label: "Dashboard", path: "/dashboard" },
+  { icon: "/journal.png", label: "Journal", path: "/journal" },
+  { icon: "/money.png", label: "Money", path: "/money" },
+  { icon: "/health.png", label: "Health", path: "/health" },
+  { icon: "/star.png", label: "AI Companion", path: "/ai-companion" },
+  { icon: "/reports.png", label: "Reports", path: "/reports" },
+  { icon: "/goals.png", label: "Goals", path: "/goals" },
+  { icon: "/settings.png", label: "Settings", path: "/settings" },
 ];
 
 export default function Sidebar() {
@@ -57,7 +57,15 @@ export default function Sidebar() {
               fontWeight: active ? "600" : "400", fontSize: "13px",
               transition: "all 0.2s"
             }}>
-              <span style={{ fontSize: "16px" }}>{icon}</span>
+              <img
+                src={icon}
+                alt={label}
+                style={{
+                  width: "22px", height: "22px", objectFit: "contain",
+                  borderRadius: "6px",
+                  opacity: active ? 1 : 0.75
+                }}
+              />
               {label}
             </div>
           );
