@@ -71,7 +71,7 @@ export default function SignUpPage() {
             <SignUp
               routing="hash"
               signInUrl="/"
-              afterSignUpUrl="/onboarding"
+              forceRedirectUrl="/onboarding"
               appearance={{
                 variables:{colorPrimary:"#7c3aed",borderRadius:"10px",fontSize:"13px"},
                 elements:{

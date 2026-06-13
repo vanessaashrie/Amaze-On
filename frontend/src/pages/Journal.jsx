@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useUser } from "@clerk/clerk-react";
 import { useTheme } from "../components/ThemeContext";
 import DashboardLayout from "../components/DashboardLayout";
+import api from "../api";
 
 const moods = [
   { emoji: "😁", label: "Great", color: "#10b981" },
@@ -10,17 +12,15 @@ const moods = [
   { emoji: "😣", label: "Terrible", color: "#ef4444" },
 ];
 
-const pastEntries = [
-  { date: "May 14, 2025", mood: "😁", title: "Productive day!", preview: "Finished my assignment early and went for a walk...", tag: "Great" },
-  { date: "May 13, 2025", mood: "😐", title: "Feeling a bit off", preview: "Couldn't focus much today. Spent too much time on phone...", tag: "Okay" },
-  { date: "May 12, 2025", mood: "🙂", title: "Good college day", preview: "Had a great lecture today. Made notes and felt confident...", tag: "Good" },
-];
-
 export default function Journal() {
   const { dark } = useTheme();
+  const { user } = useUser();
+
   const [selectedMood, setSelectedMood] = useState(null);
   const [entry, setEntry] = useState("");
+  const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [pastEntries, setPastEntries] = useState([]);
 
   const card = {
     background: dark ? "#1a1a2e" : "#ffffff",
@@ -33,147 +33,150 @@ export default function Journal() {
   const muted = dark ? "#94a3b8" : "#6b7280";
   const inputBg = dark ? "#0f0f1a" : "#f9fafb";
 
-  const handleSubmit = () => {
+  // Fetch past entries on load
+  useEffect(() => {
+    if (!user?.id) return;
+    api.get(`/journal/${user.id}`)
+      .then((res) => setPastEntries(res.data.entries || []))
+      .catch((err) => console.error("Failed to fetch journal entries:", err));
+  }, [user?.id]);
+
+  const handleSubmit = async () => {
     if (!selectedMood || !entry.trim()) return;
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
-    setEntry("");
-    setSelectedMood(null);
+
+    setLoading(true);
+    try {
+      await api.post("/journal/", {
+        clerk_id: user.id,
+        mood: selectedMood,
+        text: entry,
+        tags: [],
+      });
+
+      setSubmitted(true);
+      setEntry("");
+      setSelectedMood(null);
+      setTimeout(() => setSubmitted(false), 2000);
+
+      // Refresh past entries
+      const res = await api.get(`/journal/${user.id}`);
+      setPastEntries(res.data.entries || []);
+
+    } catch (err) {
+      console.error("Failed to save journal:", err);
+      alert("Failed to save journal");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <DashboardLayout>
-
-      {/* Header */}
       <div style={{ marginBottom: "24px" }}>
-        <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700", color: text }}>📓 My Journal</h2>
-        <p style={{ margin: 0, fontSize: "13px", color: muted }}>Write your thoughts, track your mood, and reflect on your day.</p>
+        <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700", color: text }}>
+          📓 My Journal
+        </h2>
+        <p style={{ margin: 0, fontSize: "13px", color: muted }}>
+          Write your thoughts and track your mood.
+        </p>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "20px" }}>
 
-        {/* LEFT — New Entry */}
+        {/* LEFT SIDE */}
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
 
-          {/* Mood Picker */}
           <div style={card}>
-            <h3 style={{ margin: "0 0 14px", fontSize: "14px", fontWeight: "600", color: text }}>How are you feeling today?</h3>
-            <div style={{ display: "flex", gap: "12px" }}>
-              {moods.map(({ emoji, label, color }) => (
+            <h3 style={{ marginBottom: "14px", fontSize: "14px", color: text }}>
+              How are you feeling today?
+            </h3>
+            <div style={{ display: "flex", gap: "10px" }}>
+              {moods.map((m) => (
                 <div
-                  key={label}
-                  onClick={() => setSelectedMood(label)}
+                  key={m.label}
+                  onClick={() => setSelectedMood(m.label)}
                   style={{
-                    flex: 1, display: "flex", flexDirection: "column", alignItems: "center",
-                    gap: "6px", padding: "12px 8px", borderRadius: "12px", cursor: "pointer",
-                    border: `2px solid ${selectedMood === label ? color : "transparent"}`,
-                    background: selectedMood === label
-                      ? color + "15"
-                      : dark ? "#0f0f1a" : "#f9fafb",
-                    transition: "all 0.2s"
+                    flex: 1,
+                    padding: "10px",
+                    textAlign: "center",
+                    borderRadius: "12px",
+                    cursor: "pointer",
+                    border: selectedMood === m.label ? `2px solid ${m.color}` : "1px solid transparent",
+                    background: selectedMood === m.label ? `${m.color}20` : inputBg,
                   }}
                 >
-                  <span style={{ fontSize: "24px" }}>{emoji}</span>
-                  <span style={{ fontSize: "11px", color: selectedMood === label ? color : muted, fontWeight: "500" }}>{label}</span>
+                  <div style={{ fontSize: "22px" }}>{m.emoji}</div>
+                  <div style={{ fontSize: "11px", color: muted }}>{m.label}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Write Entry */}
           <div style={card}>
-            <h3 style={{ margin: "0 0 14px", fontSize: "14px", fontWeight: "600", color: text }}>Write your thoughts</h3>
+            <h3 style={{ marginBottom: "10px", fontSize: "14px", color: text }}>
+              Write your thoughts
+            </h3>
             <textarea
               value={entry}
               onChange={(e) => setEntry(e.target.value)}
-              placeholder="What's on your mind today? Write freely..."
+              placeholder="What's on your mind today?"
               rows={6}
               style={{
-                width: "100%", padding: "14px", borderRadius: "12px",
-                border: `1.5px solid ${dark ? "#2d2d44" : "#e5e7eb"}`,
-                background: inputBg, color: text, fontSize: "13px",
-                resize: "vertical", outline: "none", boxSizing: "border-box",
-                lineHeight: "1.6", fontFamily: "inherit"
+                width: "100%",
+                padding: "12px",
+                borderRadius: "12px",
+                border: "1px solid #ddd",
+                background: inputBg,
+                color: text,
+                resize: "none",
+                boxSizing: "border-box",
               }}
             />
-
-            {/* Tags */}
-            <div style={{ display: "flex", gap: "8px", marginTop: "12px", flexWrap: "wrap" }}>
-              {["College", "Health", "Money", "Relationships", "Goals", "Stress"].map(tag => (
-                <span key={tag} style={{
-                  padding: "4px 12px", borderRadius: "20px", fontSize: "11px",
-                  background: dark ? "#2d2d44" : "#f5f3ff",
-                  color: dark ? "#a78bfa" : "#7c3aed", cursor: "pointer", fontWeight: "500"
-                }}>{tag}</span>
-              ))}
-            </div>
-
             <button
               onClick={handleSubmit}
+              disabled={loading}
               style={{
-                width: "100%", marginTop: "16px", padding: "13px",
-                borderRadius: "12px", border: "none",
+                marginTop: "12px",
+                width: "100%",
+                padding: "12px",
+                borderRadius: "12px",
+                border: "none",
+                cursor: loading ? "not-allowed" : "pointer",
                 background: submitted ? "#10b981" : "#7c3aed",
-                color: "white", fontSize: "14px", fontWeight: "600", cursor: "pointer",
-                transition: "background 0.3s"
+                color: "white",
+                fontWeight: "600",
               }}
             >
-              {submitted ? "✅ Entry Saved!" : "Save Journal Entry"}
+              {loading ? "Saving..." : submitted ? "Saved ✔" : "Save Journal"}
             </button>
           </div>
+
         </div>
 
-        {/* RIGHT — Past Entries + Streak */}
+        {/* RIGHT SIDE */}
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
 
-          {/* Streak */}
-          <div style={{
-            ...card,
-            background: dark ? "#1a1a2e" : "#faf5ff",
-            border: `1px solid ${dark ? "#2d2d44" : "#e9d5ff"}`
-          }}>
-            <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "40px", marginBottom: "8px" }}>🔥</div>
-              <p style={{ margin: "0 0 4px", fontSize: "28px", fontWeight: "700", color: "#7c3aed" }}>7</p>
-              <p style={{ margin: "0 0 8px", fontSize: "13px", fontWeight: "600", color: text }}>Day Streak!</p>
-              <p style={{ margin: 0, fontSize: "12px", color: muted }}>Keep journaling every day to maintain your streak.</p>
-            </div>
+          <div style={card}>
+            <h3 style={{ color: text }}>🔥 Streak</h3>
+            <h1 style={{ color: "#7c3aed" }}>{pastEntries.length} entries</h1>
           </div>
 
-          {/* Mood Summary */}
           <div style={card}>
-            <h3 style={{ margin: "0 0 14px", fontSize: "14px", fontWeight: "600", color: text }}>This Week's Mood</h3>
-            {[
-              { day: "Mon", emoji: "😁", color: "#10b981" },
-              { day: "Tue", emoji: "🙂", color: "#3b82f6" },
-              { day: "Wed", emoji: "😐", color: "#f59e0b" },
-              { day: "Thu", emoji: "😁", color: "#10b981" },
-              { day: "Fri", emoji: "😞", color: "#f97316" },
-              { day: "Sat", emoji: "🙂", color: "#3b82f6" },
-              { day: "Sun", emoji: "😁", color: "#10b981" },
-            ].map(({ day, emoji }) => (
-              <div key={day} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
-                <span style={{ fontSize: "12px", color: muted, width: "30px" }}>{day}</span>
-                <span style={{ fontSize: "18px" }}>{emoji}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Past Entries */}
-          <div style={card}>
-            <h3 style={{ margin: "0 0 14px", fontSize: "14px", fontWeight: "600", color: text }}>Past Entries</h3>
-            {pastEntries.map(({ date, mood, title, preview }) => (
-              <div key={date} style={{
-                padding: "12px", borderRadius: "12px",
-                background: dark ? "#0f0f1a" : "#f9fafb",
-                marginBottom: "10px", cursor: "pointer"
-              }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "4px" }}>
-                  <span style={{ fontSize: "11px", color: muted }}>{date}</span>
-                  <span style={{ fontSize: "16px" }}>{mood}</span>
+            <h3 style={{ color: text }}>Past Entries</h3>
+            {pastEntries.length === 0 && (
+              <p style={{ fontSize: "13px", color: muted }}>No entries yet.</p>
+            )}
+            {pastEntries.map((e) => (
+              <div key={e.entry_id} style={{ marginBottom: "12px" }}>
+                <div style={{ fontSize: "11px", color: muted }}>
+                  {new Date(e.timestamp).toLocaleDateString("en-IN", {
+                    day: "numeric", month: "short", year: "numeric"
+                  })}
                 </div>
-                <p style={{ margin: "0 0 4px", fontSize: "13px", fontWeight: "600", color: text }}>{title}</p>
-                <p style={{ margin: 0, fontSize: "11px", color: muted }}>{preview}</p>
+                <div style={{ fontWeight: "600", color: text }}>{e.mood}</div>
+                <div style={{ fontSize: "11px", color: muted }}>
+                  {e.text?.slice(0, 80)}...
+                </div>
               </div>
             ))}
           </div>

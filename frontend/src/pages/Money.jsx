@@ -1,38 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useUser } from "@clerk/clerk-react";
 import { useTheme } from "../components/ThemeContext";
 import DashboardLayout from "../components/DashboardLayout";
+import api from "../api";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, LineChart, Line, XAxis, YAxis } from "recharts";
 
-const pieData = [
-  { name: "Food", value: 2450, color: "#f97316" },
-  { name: "Transport", value: 1250, color: "#3b82f6" },
-  { name: "Shopping", value: 1080, color: "#ec4899" },
-  { name: "Education", value: 980, color: "#8b5cf6" },
-  { name: "Entertainment", value: 620, color: "#10b981" },
-  { name: "Others", value: 420, color: "#6b7280" },
-];
-
-const lineData = [
-  { month: "Jan", spent: 4200 },
-  { month: "Feb", spent: 3800 },
-  { month: "Mar", spent: 5100 },
-  { month: "Apr", spent: 4600 },
-  { month: "May", spent: 6800 },
-];
-
-const transactions = [
-  { icon: "🛒", name: "Swiggy", category: "Food", date: "Today, 1:23 PM", amount: -320 },
-  { icon: "📦", name: "Amazon", category: "Shopping", date: "Today, 11:05 AM", amount: -1249 },
-  { icon: "🚇", name: "Metro Card", category: "Transport", date: "Yesterday", amount: -200 },
-  { icon: "📚", name: "Coursera", category: "Education", date: "May 13", amount: -1399 },
-  { icon: "🎮", name: "Netflix", category: "Entertainment", date: "May 12", amount: -499 },
-  { icon: "☕", name: "Cafe Coffee Day", category: "Food", date: "May 11", amount: -180 },
-];
+const CATEGORY_COLORS = {
+  Food: "#f97316",
+  Transport: "#3b82f6",
+  Shopping: "#ec4899",
+  Education: "#8b5cf6",
+  Entertainment: "#10b981",
+  Others: "#6b7280",
+};
 
 export default function Money() {
   const { dark } = useTheme();
+  const { user } = useUser();
+
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name: "", amount: "", category: "Food", type: "expense" });
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const card = {
     background: dark ? "#1a1a2e" : "#ffffff",
@@ -47,7 +36,60 @@ export default function Money() {
     width: "100%", padding: "10px 14px", borderRadius: "10px",
     border: `1.5px solid ${dark ? "#2d2d44" : "#e5e7eb"}`,
     background: dark ? "#0f0f1a" : "#f9fafb",
-    color: text, fontSize: "13px", outline: "none", boxSizing: "border-box"
+    color: text, fontSize: "13px", outline: "none", boxSizing: "border-box",
+  };
+
+  // Fetch transactions on load
+  useEffect(() => {
+    if (!user?.id) return;
+    api.get(`/money/${user.id}`)
+      .then((res) => setTransactions(res.data.transactions || []))
+      .catch((err) => console.error("Failed to fetch transactions:", err));
+  }, [user?.id]);
+
+  // Derived stats
+  const totalSpent = transactions
+    .filter((t) => t.type === "expense")
+    .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
+
+  const totalIncome = transactions
+    .filter((t) => t.type === "income")
+    .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
+
+  // Pie data from real transactions
+  const pieData = Object.entries(
+    transactions
+      .filter((t) => t.type === "expense")
+      .reduce((acc, t) => {
+        acc[t.category] = (acc[t.category] || 0) + parseFloat(t.amount || 0);
+        return acc;
+      }, {})
+  ).map(([name, value]) => ({ name, value, color: CATEGORY_COLORS[name] || "#6b7280" }));
+
+  const handleSave = async () => {
+    if (!form.name || !form.amount) return;
+    setLoading(true);
+    try {
+      await api.post("/money/", {
+        clerk_id: user.id,
+        name: form.name,
+        amount: form.amount.toString(),
+        category: form.category,
+        type: form.type,
+      });
+
+      // Refresh transactions
+      const res = await api.get(`/money/${user.id}`);
+      setTransactions(res.data.transactions || []);
+
+      setForm({ name: "", amount: "", category: "Food", type: "expense" });
+      setShowForm(false);
+    } catch (err) {
+      console.error("Failed to save transaction:", err);
+      alert("Failed to save transaction");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -59,13 +101,12 @@ export default function Money() {
         </div>
         <button onClick={() => setShowForm(!showForm)} style={{
           padding: "10px 20px", borderRadius: "12px", border: "none",
-          background: "#7c3aed", color: "white", fontSize: "13px", fontWeight: "600", cursor: "pointer"
+          background: "#7c3aed", color: "white", fontSize: "13px", fontWeight: "600", cursor: "pointer",
         }}>+ Add Transaction</button>
       </div>
 
-      {/* Add Transaction Form */}
       {showForm && (
-        <div style={{ ...card, marginBottom: "20px", background: dark ? "#1a1a2e" : "#faf5ff", border: `1px solid ${dark ? "#2d2d44" : "#e9d5ff"}` }}>
+        <div style={{ ...card, marginBottom: "20px" }}>
           <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>New Transaction</h3>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr auto", gap: "12px", alignItems: "end" }}>
             <div>
@@ -89,10 +130,10 @@ export default function Money() {
                 <option value="income">Income</option>
               </select>
             </div>
-            <button style={{
+            <button onClick={handleSave} disabled={loading} style={{
               padding: "10px 20px", borderRadius: "10px", border: "none",
-              background: "#7c3aed", color: "white", fontSize: "13px", fontWeight: "600", cursor: "pointer"
-            }}>Save</button>
+              background: "#7c3aed", color: "white", fontSize: "13px", fontWeight: "600", cursor: "pointer",
+            }}>{loading ? "Saving..." : "Save"}</button>
           </div>
         </div>
       )}
@@ -100,10 +141,10 @@ export default function Money() {
       {/* Stat Cards */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "16px", marginBottom: "20px" }}>
         {[
-          { label: "Monthly Budget", value: "₹10,000", icon: "💼", color: "#7c3aed" },
-          { label: "Total Spent", value: "₹6,800", icon: "📤", color: "#ef4444" },
-          { label: "Remaining", value: "₹3,200", icon: "💚", color: "#10b981" },
-          { label: "Saved This Month", value: "₹1,500", icon: "🏦", color: "#3b82f6" },
+          { label: "Total Spent", value: `₹${totalSpent.toLocaleString("en-IN")}`, icon: "📤", color: "#ef4444" },
+          { label: "Total Income", value: `₹${totalIncome.toLocaleString("en-IN")}`, icon: "📥", color: "#10b981" },
+          { label: "Net Balance", value: `₹${(totalIncome - totalSpent).toLocaleString("en-IN")}`, icon: "💚", color: "#3b82f6" },
+          { label: "Transactions", value: transactions.length, icon: "🏦", color: "#7c3aed" },
         ].map(({ label, value, icon, color }) => (
           <div key={label} style={card}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
@@ -116,70 +157,76 @@ export default function Money() {
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", marginBottom: "20px" }}>
-
-        {/* Pie Chart */}
         <div style={card}>
           <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>Spending Breakdown</h3>
-          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-            <ResponsiveContainer width={160} height={160}>
-              <PieChart>
-                <Pie data={pieData} cx="50%" cy="50%" innerRadius={40} outerRadius={70} dataKey="value" paddingAngle={3}>
-                  {pieData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
-                </Pie>
-                <Tooltip formatter={(v) => `₹${v}`} />
-              </PieChart>
-            </ResponsiveContainer>
-            <div style={{ flex: 1 }}>
-              {pieData.map(({ name, value, color }) => (
-                <div key={name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <div style={{ width: "10px", height: "10px", borderRadius: "50%", background: color }} />
-                    <span style={{ fontSize: "12px", color: muted }}>{name}</span>
+          {pieData.length === 0 ? (
+            <p style={{ fontSize: "13px", color: muted }}>No expenses yet.</p>
+          ) : (
+            <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+              <ResponsiveContainer width={160} height={160}>
+                <PieChart>
+                  <Pie data={pieData} cx="50%" cy="50%" innerRadius={40} outerRadius={70} dataKey="value" paddingAngle={3}>
+                    {pieData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                  </Pie>
+                  <Tooltip formatter={(v) => `₹${v}`} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div style={{ flex: 1 }}>
+                {pieData.map(({ name, value, color }) => (
+                  <div key={name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <div style={{ width: "10px", height: "10px", borderRadius: "50%", background: color }} />
+                      <span style={{ fontSize: "12px", color: muted }}>{name}</span>
+                    </div>
+                    <span style={{ fontSize: "12px", fontWeight: "600", color: text }}>₹{value}</span>
                   </div>
-                  <span style={{ fontSize: "12px", fontWeight: "600", color: text }}>₹{value}</span>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
-        {/* Line Chart */}
         <div style={card}>
-          <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>Monthly Spending Trend</h3>
-          <ResponsiveContainer width="100%" height={180}>
-            <LineChart data={lineData}>
-              <XAxis dataKey="month" tick={{ fontSize: 11, fill: muted }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: muted }} axisLine={false} tickLine={false} />
-              <Tooltip contentStyle={{ background: dark ? "#1a1a2e" : "#fff", border: "none", borderRadius: "8px", fontSize: "12px" }} />
-              <Line type="monotone" dataKey="spent" stroke="#7c3aed" strokeWidth={2.5} dot={{ fill: "#7c3aed", r: 4 }} />
-            </LineChart>
-          </ResponsiveContainer>
+          <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>Recent Activity</h3>
+          {transactions.slice(0, 5).map((t) => (
+            <div key={t.transaction_id} style={{
+              display: "flex", justifyContent: "space-between",
+              padding: "8px 0", borderBottom: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`,
+            }}>
+              <div>
+                <p style={{ margin: "0 0 2px", fontSize: "13px", fontWeight: "500", color: text }}>{t.name}</p>
+                <p style={{ margin: 0, fontSize: "11px", color: muted }}>{t.category}</p>
+              </div>
+              <p style={{ margin: 0, fontSize: "13px", fontWeight: "600", color: t.type === "expense" ? "#ef4444" : "#10b981" }}>
+                {t.type === "expense" ? "-" : "+"}₹{t.amount}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Transactions */}
+      {/* All Transactions */}
       <div style={card}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
-          <h3 style={{ margin: 0, fontSize: "14px", fontWeight: "600", color: text }}>All Transactions</h3>
-          <select style={{ ...inputStyle, width: "auto", padding: "6px 12px" }}>
-            <option>All Categories</option>
-            {["Food", "Transport", "Shopping", "Education", "Entertainment"].map(c => <option key={c}>{c}</option>)}
-          </select>
-        </div>
-        {transactions.map(({ icon, name, category, date, amount }) => (
-          <div key={name + date} style={{
+        <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>All Transactions</h3>
+        {transactions.length === 0 && (
+          <p style={{ fontSize: "13px", color: muted }}>No transactions yet.</p>
+        )}
+        {transactions.map((t) => (
+          <div key={t.transaction_id} style={{
             display: "flex", alignItems: "center", justifyContent: "space-between",
-            padding: "12px 0", borderBottom: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`
+            padding: "12px 0", borderBottom: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`,
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <div style={{ width: "40px", height: "40px", borderRadius: "10px", background: dark ? "#2d2d44" : "#f5f3ff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>{icon}</div>
+              <div style={{ width: "40px", height: "40px", borderRadius: "10px", background: dark ? "#2d2d44" : "#f5f3ff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>
+                💸
+              </div>
               <div>
-                <p style={{ margin: "0 0 2px", fontSize: "13px", fontWeight: "500", color: text }}>{name}</p>
-                <p style={{ margin: 0, fontSize: "11px", color: muted }}>{category} · {date}</p>
+                <p style={{ margin: "0 0 2px", fontSize: "13px", fontWeight: "500", color: text }}>{t.name}</p>
+                <p style={{ margin: 0, fontSize: "11px", color: muted }}>{t.category} · {new Date(t.date).toLocaleDateString("en-IN")}</p>
               </div>
             </div>
-            <p style={{ margin: 0, fontSize: "14px", fontWeight: "600", color: amount < 0 ? "#ef4444" : "#10b981" }}>
-              {amount < 0 ? "-" : "+"}₹{Math.abs(amount)}
+            <p style={{ margin: 0, fontSize: "14px", fontWeight: "600", color: t.type === "expense" ? "#ef4444" : "#10b981" }}>
+              {t.type === "expense" ? "-" : "+"}₹{t.amount}
             </p>
           </div>
         ))}

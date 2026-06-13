@@ -13,6 +13,7 @@ import Reports from "./pages/Reports";
 import Goals from "./pages/Goals";
 import Settings from "./pages/Settings";
 
+// Requires sign-in — redirects to login if not authenticated
 const Protected = ({ children }) => (
   <>
     <SignedIn>{children}</SignedIn>
@@ -20,22 +21,24 @@ const Protected = ({ children }) => (
   </>
 );
 
+// After sign-in: go to dashboard if onboarding done, else go to onboarding
+function PostAuthRedirect() {
+  const onboardingDone = localStorage.getItem("pocketBuddyUser");
+  return <Navigate to={onboardingDone ? "/dashboard" : "/onboarding"} replace />;
+}
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
 
-        {/* If already signed in, skip login → go to onboarding (or dashboard later) */}
+        {/* Public — redirect signed-in users away */}
         <Route
           path="/"
           element={
             <>
-              <SignedIn>
-                <Navigate to="/onboarding" replace />
-              </SignedIn>
-              <SignedOut>
-                <LoginPage />
-              </SignedOut>
+              <SignedIn><PostAuthRedirect /></SignedIn>
+              <SignedOut><LoginPage /></SignedOut>
             </>
           }
         />
@@ -44,41 +47,31 @@ function App() {
           path="/sign-up"
           element={
             <>
-              <SignedIn>
-                <Navigate to="/onboarding" replace />
-              </SignedIn>
-              <SignedOut>
-                <SignUpPage />
-              </SignedOut>
+              <SignedIn><PostAuthRedirect /></SignedIn>
+              <SignedOut><SignUpPage /></SignedOut>
             </>
           }
         />
 
+        {/* Onboarding — only for signed-in users who haven't completed it */}
         <Route
           path="/onboarding"
-          element={
-            <>
-              <SignedIn>
-                <OnboardingPage />
-              </SignedIn>
-              <SignedOut>
-                <Navigate to="/" replace />
-              </SignedOut>
-            </>
-          }
+          element={<Protected><OnboardingPage /></Protected>}
         />
 
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/sign-up" element={<SignUpPage />} />
-        <Route path="/onboarding" element={<Protected><OnboardingPage /></Protected>} />
-        <Route path="/dashboard" element={<Protected><Dashboard /></Protected>} />
-        <Route path="/journal" element={<Protected><Journal /></Protected>} />
-        <Route path="/money" element={<Protected><Money /></Protected>} />
-        <Route path="/health" element={<Protected><Health /></Protected>} />
+        {/* Protected app routes */}
+        <Route path="/dashboard"    element={<Protected><Dashboard /></Protected>} />
+        <Route path="/journal"      element={<Protected><Journal /></Protected>} />
+        <Route path="/money"        element={<Protected><Money /></Protected>} />
+        <Route path="/health"       element={<Protected><Health /></Protected>} />
         <Route path="/ai-companion" element={<Protected><AICompanion /></Protected>} />
-        <Route path="/reports" element={<Protected><Reports /></Protected>} />
-        <Route path="/goals" element={<Protected><Goals /></Protected>} />
-        <Route path="/settings" element={<Protected><Settings /></Protected>} />
+        <Route path="/reports"      element={<Protected><Reports /></Protected>} />
+        <Route path="/goals"        element={<Protected><Goals /></Protected>} />
+        <Route path="/settings"     element={<Protected><Settings /></Protected>} />
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+
       </Routes>
     </BrowserRouter>
   );
