@@ -66,7 +66,7 @@ export default function Settings() {
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
               {[
-                { label: "AI Friend Name", value: savedUser.friendName || "Nova" },
+                { label: "AI Friend Name", value: savedUser.friend_name || "Nova" },
                 { label: "College", value: savedUser.college || "Not set" },
                 { label: "Phone", value: savedUser.phone || "Not set" },
                 { label: "Status", value: savedUser.status || "Student" },
