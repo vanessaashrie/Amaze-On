@@ -1,95 +1,232 @@
 import { SignUp } from "@clerk/clerk-react";
 
-function Mascot() {
-  return (
-    <svg width="120" height="130" viewBox="0 0 180 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="90" cy="185" rx="50" ry="10" fill="#e0d7ff" opacity="0.5"/>
-      <ellipse cx="90" cy="130" rx="65" ry="70" fill="#a8f0c6"/>
-      <ellipse cx="90" cy="125" rx="60" ry="65" fill="#b8f5d0"/>
-      <circle cx="68" cy="115" r="10" fill="white"/>
-      <circle cx="112" cy="115" r="10" fill="white"/>
-      <circle cx="71" cy="116" r="5" fill="#2d2d2d"/>
-      <circle cx="115" cy="116" r="5" fill="#2d2d2d"/>
-      <circle cx="73" cy="114" r="2" fill="white"/>
-      <circle cx="117" cy="114" r="2" fill="white"/>
-      <ellipse cx="62" cy="128" rx="8" ry="5" fill="#f9a8d4" opacity="0.7"/>
-      <ellipse cx="118" cy="128" rx="8" ry="5" fill="#f9a8d4" opacity="0.7"/>
-      <path d="M75 135 Q90 148 105 135" stroke="#2d2d2d" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
-      <ellipse cx="90" cy="72" rx="12" ry="18" fill="#4ade80"/>
-      <path d="M90 72 Q80 55 70 60" stroke="#4ade80" strokeWidth="4" strokeLinecap="round" fill="none"/>
-      <path d="M90 72 Q100 50 112 58" stroke="#4ade80" strokeWidth="4" strokeLinecap="round" fill="none"/>
-      <path d="M35 140 Q20 130 25 115" stroke="#a8f0c6" strokeWidth="18" strokeLinecap="round" fill="none"/>
-      <path d="M145 140 Q160 130 155 115" stroke="#a8f0c6" strokeWidth="18" strokeLinecap="round" fill="none"/>
-      <circle cx="50" cy="75" r="18" fill="white" stroke="#e5e7eb" strokeWidth="1"/>
-      <text x="50" y="81" textAnchor="middle" fontSize="16">❤️</text>
-      <circle cx="138" cy="60" r="18" fill="#7c3aed" opacity="0.9"/>
-      <circle cx="134" cy="58" r="4" fill="white" opacity="0.6"/>
-      <circle cx="70" cy="170" r="12" fill="#fcd34d"/>
-      <text x="70" y="175" textAnchor="middle" fontSize="12">₹</text>
-      <rect x="100" y="155" width="28" height="20" rx="4" fill="#7c3aed" opacity="0.8"/>
-      <rect x="104" y="159" width="6" height="12" rx="1" fill="white" opacity="0.8"/>
-      <rect x="112" y="162" width="6" height="9" rx="1" fill="white" opacity="0.8"/>
-      <rect x="120" y="165" width="6" height="6" rx="1" fill="white" opacity="0.8"/>
-    </svg>
-  );
-}
-
 export default function SignUpPage() {
   return (
-    <div style={{minHeight:"100vh",background:"#f0eeff",display:"flex",alignItems:"center",justifyContent:"center",padding:"16px",boxSizing:"border-box"}}>
-      <div style={{width:"100%",maxWidth:"960px",background:"white",borderRadius:"24px",boxShadow:"0 20px 60px rgba(0,0,0,0.08)",display:"grid",gridTemplateColumns:"1fr 1fr",minHeight:"580px",overflow:"hidden"}}>
+    <>
+      <style>{`
+        .cl-formFieldInput {
+          border: 1.5px solid #e5e7eb !important;
+          border-radius: 10px !important;
+          box-shadow: none !important;
+          outline: none !important;
+          font-size: 15px !important;
+          padding: 13px 14px !important;
+        }
+        .cl-formFieldInput:focus {
+          border: 1.5px solid #7c3aed !important;
+          box-shadow: none !important;
+        }
+        .cl-card {
+          box-shadow: none !important;
+          border: none !important;
+          background: transparent !important;
+        }
+        .cl-cardBox {
+          box-shadow: none !important;
+          border: none !important;
+          background: transparent !important;
+        }
+        .cl-footer {
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+        }
+        .cl-footerPages {
+          background: transparent !important;
+          box-shadow: none !important;
+          border: none !important;
+        }
+        .cl-socialButtonsBlockButton {
+          border: 1.5px solid #e5e7eb !important;
+          border-radius: 10px !important;
+          box-shadow: none !important;
+          padding: 13px !important;
+          font-size: 15px !important;
+        }
+        .cl-dividerLine {
+          background: #f3f4f6 !important;
+        }
+        .cl-dividerText {
+          font-size: 14px !important;
+        }
+        .cl-formFieldLabel {
+          font-size: 14px !important;
+        }
+        .cl-formButtonPrimary {
+          padding: 14px !important;
+          font-size: 15px !important;
+        }
+        .cl-footerActionText, .cl-footerActionLink {
+          font-size: 14px !important;
+        }
+        /* Kill Clerk's internal top padding that causes the gap */
+        .cl-main {
+          padding-top: 0 !important;
+          margin-top: 0 !important;
+        }
+        .cl-headerTitle, .cl-headerSubtitle, .cl-header {
+          display: none !important;
+          height: 0 !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+        .cl-socialButtons {
+          margin-top: 0 !important;
+        }
+      `}</style>
 
-        {/* LEFT — purple panel */}
-        <div style={{background:"linear-gradient(160deg,#7c3aed 0%,#6d28d9 100%)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"48px 40px"}}>
-          <Mascot/>
-          <h2 style={{fontSize:"24px",fontWeight:"700",color:"white",textAlign:"center",margin:"20px 0 8px"}}>Join Pocket Buddy</h2>
-          <p style={{fontSize:"14px",color:"rgba(255,255,255,0.85)",textAlign:"center",marginBottom:"32px",lineHeight:"1.6"}}>Your AI Financial & Wellness Companion 💜</p>
-          {[
-            {color:"rgba(255,255,255,0.15)",icon:"💰",label:"Smart Expense Tracking"},
-            {color:"rgba(255,255,255,0.15)",icon:"❤️",label:"Health Monitoring"},
-            {color:"rgba(255,255,255,0.15)",icon:"🧠",label:"Burnout Detection"},
-            {color:"rgba(255,255,255,0.15)",icon:"🤖",label:"AI Best Friend"},
-          ].map(({color,icon,label})=>(
-            <div key={label} style={{display:"flex",alignItems:"center",gap:"12px",marginBottom:"12px",width:"100%",maxWidth:"240px"}}>
-              <div style={{width:"32px",height:"32px",borderRadius:"8px",background:color,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"15px",flexShrink:0}}>{icon}</div>
-              <span style={{fontSize:"13px",color:"white",fontWeight:"500"}}>{label}</span>
-            </div>
-          ))}
-        </div>
+      <div style={{
+        minHeight: "100vh",
+        background: "#f0eeff",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "16px",
+        boxSizing: "border-box"
+      }}>
+        <div style={{
+          width: "100%",
+          maxWidth: "1100px",
+          background: "white",
+          borderRadius: "24px",
+          boxShadow: "0 20px 60px rgba(0,0,0,0.08)",
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          overflow: "hidden",
+        }}>
 
-        {/* RIGHT — signup form */}
-        <div style={{padding:"44px 40px",display:"flex",flexDirection:"column",justifyContent:"center",overflow:"hidden",minWidth:0}}>
-          <div style={{display:"flex",alignItems:"center",gap:"6px",marginBottom:"24px"}}>
-            <span style={{fontSize:"17px",fontWeight:"700",color:"#1f2937"}}>Pocket Buddy</span>
-            <span>💜</span>
+          {/* LEFT — mascot image */}
+          <div style={{ display: "flex" }}>
+            <img
+              src="/mascot.png"
+              alt="Pocket Buddy"
+              style={{
+                width: "100%",
+                height: "auto",
+                display: "block",
+                objectFit: "cover",
+              }}
+            />
           </div>
-          <h2 style={{fontSize:"24px",fontWeight:"700",color:"#1f2937",margin:"0 0 8px"}}>Create your account</h2>
-          <p style={{fontSize:"13px",color:"#6b7280",marginBottom:"24px",lineHeight:"1.5"}}>
-            Welcome! Please fill in the details to get started 🌱
-          </p>
-          <div style={{width:"100%",overflow:"hidden"}}>
+
+          {/* RIGHT — form evenly spread */}
+          <div style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "stretch",
+            background: "white",
+            padding: "48px 56px",
+            borderLeft: "1px solid #f3f4f6",
+            boxSizing: "border-box",
+            gap: "24px",
+          }}>
+
+            {/* Heading */}
+            <div style={{ textAlign: "center" }}>
+              <h2 style={{
+                fontSize: "36px",
+                fontWeight: "800",
+                color: "#1f2937",
+                margin: "0 0 10px",
+              }}>
+                Create Account
+              </h2>
+              <p style={{
+                fontSize: "15px",
+                color: "#6b7280",
+                lineHeight: "1.6",
+                margin: 0,
+              }}>
+                Welcome! Please fill in the details to get started 🌱
+              </p>
+            </div>
+
+            {/* Clerk form — no extra wrappers adding space */}
             <SignUp
               routing="hash"
               signInUrl="/"
               afterSignUpUrl="/onboarding"
               appearance={{
-                variables:{colorPrimary:"#7c3aed",borderRadius:"10px",fontSize:"13px"},
-                elements:{
-                  rootBox:{width:"100%"},
-                  card:{boxShadow:"none",padding:"0",margin:"0",width:"100%"},
-                  headerTitle:{display:"none"},
-                  headerSubtitle:{display:"none"},
-                  socialButtonsBlockButton:{border:"1.5px solid #e5e7eb",borderRadius:"10px",fontSize:"13px"},
-                  formButtonPrimary:{background:"#7c3aed",borderRadius:"10px",fontSize:"13px"},
-                  footerActionLink:{color:"#7c3aed"},
-                  formFieldInput:{fontSize:"13px"},
+                variables: {
+                  colorPrimary: "#7c3aed",
+                  borderRadius: "10px",
+                  fontSize: "15px",
+                  colorBackground: "white",
+                  colorInputBackground: "white",
+                  spacingUnit: "16px",
+                },
+                elements: {
+                  rootBox: { width: "100%" },
+                  card: {
+                    boxShadow: "none",
+                    padding: "0",
+                    margin: "0",
+                    width: "100%",
+                    border: "none",
+                    background: "transparent",
+                  },
+                  cardBox: {
+                    boxShadow: "none",
+                    border: "none",
+                    background: "transparent",
+                  },
+                  headerTitle: { display: "none", height: "0", margin: "0", padding: "0" },
+                  headerSubtitle: { display: "none", height: "0", margin: "0", padding: "0" },
+                  header: { display: "none", height: "0", margin: "0", padding: "0" },
+                  socialButtonsBlockButton: {
+                    border: "1.5px solid #e5e7eb",
+                    borderRadius: "10px",
+                    fontSize: "15px",
+                    background: "white",
+                    boxShadow: "none",
+                    padding: "13px",
+                  },
+                  formButtonPrimary: {
+                    background: "#7c3aed",
+                    borderRadius: "10px",
+                    fontSize: "15px",
+                    padding: "14px",
+                    boxShadow: "none",
+                  },
+                  footerActionLink: { color: "#7c3aed", fontSize: "14px" },
+                  formFieldInput: {
+                    fontSize: "15px",
+                    border: "1.5px solid #e5e7eb",
+                    borderRadius: "10px",
+                    padding: "13px 14px",
+                    boxShadow: "none",
+                    outline: "none",
+                  },
+                  formFieldLabel: {
+                    fontSize: "14px",
+                    color: "#374151",
+                  },
+                  dividerLine: { background: "#f3f4f6" },
+                  dividerText: { color: "#9ca3af", fontSize: "14px" },
+                  footer: {
+                    background: "transparent",
+                    border: "none",
+                    boxShadow: "none",
+                  },
+                  footerPages: {
+                    background: "transparent",
+                    boxShadow: "none",
+                    border: "none",
+                  },
+                  main: { padding: "0", marginTop: "0" },
+                  form: { gap: "16px" },
+                  page: { background: "transparent" },
+                  navbar: { display: "none" },
+                  navbarButtons: { display: "none" },
                 }
               }}
             />
-          </div>
-        </div>
 
+          </div>
+
+        </div>
       </div>
-    </div>
+    </>
   );
 }
