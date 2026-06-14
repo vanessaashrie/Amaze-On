@@ -1,89 +1,137 @@
-// Reports.jsx — Monthly overview of finances, health, and AI-generated insights
-
-// --- Imports ---
+import { useState, useEffect } from "react";
+import { useUser } from "@clerk/clerk-react";
 import { useTheme } from "../components/ThemeContext";
 import DashboardLayout from "../components/DashboardLayout";
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, RadarChart, Radar, PolarGrid, PolarAngleAxis } from "recharts";
-
-// --- Constants ---
-const monthlyData = [
-  { month: "Jan", spent: 4200, saved: 800 },
-  { month: "Feb", spent: 3800, saved: 1200 },
-  { month: "Mar", spent: 5100, saved: 400 },
-  { month: "Apr", spent: 4600, saved: 900 },
-  { month: "May", spent: 6800, saved: 1500 },
-];
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, RadarChart, Radar, PolarGrid, PolarAngleAxis } from "recharts";
+import api from "../api";
 
 const radarData = [
-  { subject: "Finance", A: 70 },
-  { subject: "Sleep", A: 55 },
+  { subject: "Finance",  A: 70 },
+  { subject: "Sleep",    A: 55 },
   { subject: "Exercise", A: 60 },
-  { subject: "Mood", A: 80 },
-  { subject: "Goals", A: 65 },
-  { subject: "Social", A: 75 },
+  { subject: "Mood",     A: 80 },
+  { subject: "Goals",    A: 65 },
+  { subject: "Social",   A: 75 },
 ];
 
-// --- Component ---
 export default function Reports() {
   const { dark } = useTheme();
+  const { user } = useUser();
 
-  // --- Styles ---
+  const [transactions, setTransactions] = useState([]);
+  const [healthLogs, setHealthLogs]     = useState([]);
+  const [goals, setGoals]               = useState([]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    api.get(`/money/${user.id}`).then(r => setTransactions(r.data.transactions || [])).catch(() => {});
+    api.get(`/health/${user.id}`).then(r => setHealthLogs(r.data.logs || [])).catch(() => {});
+    api.get(`/goals/${user.id}`).then(r => setGoals(r.data.goals || [])).catch(() => {});
+  }, [user?.id]);
+
+  // ── Derived values ────────────────────────────────────────────────
+  const totalSpent = transactions
+    .filter(t => t.type === "expense")
+    .reduce((s, t) => s + parseFloat(t.amount || 0), 0);
+
+  const totalSaved = Math.max(0,
+    transactions.filter(t => t.type === "income").reduce((s, t) => s + parseFloat(t.amount || 0), 0) - totalSpent
+  );
+
+  const avgSleep = healthLogs.length
+    ? (healthLogs.reduce((s, l) => s + parseFloat(l.sleep_hours || 0), 0) / healthLogs.length).toFixed(1)
+    : "--";
+
+  const goalProgress = goals.length
+    ? Math.round(goals.reduce((s, g) => s + (parseFloat(g.current || 0) / parseFloat(g.target || 1)) * 100, 0) / goals.length)
+    : 0;
+
+  // ── Monthly chart data ────────────────────────────────────────────
+  const monthlyData = Array.from({ length: 5 }, (_, i) => {
+    const d = new Date();
+    d.setMonth(d.getMonth() - (4 - i));
+    const month    = d.toLocaleString("en-IN", { month: "short" });
+    const monthStr = d.toISOString().slice(0, 7);
+    const spent = transactions.filter(t => t.type === "expense" && t.date?.startsWith(monthStr)).reduce((s, t) => s + parseFloat(t.amount || 0), 0);
+    const saved = transactions.filter(t => t.type === "income"  && t.date?.startsWith(monthStr)).reduce((s, t) => s + parseFloat(t.amount || 0), 0);
+    return { month, spent, saved };
+  });
+
+  // ── AI insights from real data ────────────────────────────────────
+  const insights = [
+    {
+      icon: "💰", title: "Spending Summary", color: "#f97316",
+      msg: `You've spent ₹${totalSpent.toLocaleString("en-IN")} total. ${totalSpent > 5000 ? "Consider cutting back." : "Great job keeping spending low!"}`,
+    },
+    {
+      icon: "🌙", title: "Sleep Analysis", color: "#6366f1",
+      msg: `Your average sleep is ${avgSleep} hours. ${parseFloat(avgSleep) < 7 ? "Try to get at least 7 hours." : "Great sleep habits!"}`,
+    },
+    {
+      icon: "🎯", title: "Goal Progress", color: "#10b981",
+      msg: `You are ${goalProgress}% through your goals. ${goalProgress > 50 ? "Keep it up!" : "Push harder to reach your targets!"}`,
+    },
+  ];
+
+  // ── Styles ────────────────────────────────────────────────────────
   const card = {
     background: dark ? "#1a1a2e" : "#ffffff",
     borderRadius: "16px", padding: "24px",
     border: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`,
   };
-  const text = dark ? "#f1f5f9" : "#1f2937";
+  const text  = dark ? "#f1f5f9" : "#1f2937";
   const muted = dark ? "#94a3b8" : "#6b7280";
 
-  // --- Render ---
   return (
     <DashboardLayout>
-      {/* Page Header */}
       <div style={{ marginBottom: "24px" }}>
         <h2 style={{ margin: "0 0 4px", fontSize: "26px", fontWeight: "700", color: text, display: "flex", alignItems: "center", gap: "10px" }}>
           <img src="/reports.png" alt="reports" style={{ width: "32px", height: "32px", objectFit: "contain" }} />
           Reports
         </h2>
-        <p style={{ margin: 0, fontSize: "15px", color: muted }}>Your monthly overview of finances, health and wellness.</p>
+        <p style={{ margin: 0, fontSize: "15px", color: muted }}>Your overview of finances, health and wellness.</p>
       </div>
 
       {/* Summary Cards */}
       <div className="responsive-grid-4" style={{ marginBottom: "20px" }}>
         {[
-          { label: "Total Spent (May)", value: "₹6,800", change: "+12%", up: true, icon: "📤" },
-          { label: "Total Saved (May)", value: "₹1,500", change: "+8%", up: true, icon: "💰" },
-          { label: "Avg Sleep", value: "6.8 hrs", change: "-0.3hrs", up: false, icon: "🌙" },
-          { label: "Mood Score", value: "7.2/10", change: "+0.5", up: true, icon: "😊" },
-        ].map(({ label, value, change, up, icon }) => (
+          { label: "Total Spent",   value: `₹${totalSpent.toLocaleString("en-IN")}`, sub: `${transactions.filter(t => t.type === "expense").length} expenses`,  icon: "📤", color: "#ef4444" },
+          { label: "Total Saved",   value: `₹${totalSaved.toLocaleString("en-IN")}`, sub: "income minus expenses",                                              icon: "💰", color: "#10b981" },
+          { label: "Avg Sleep",     value: `${avgSleep} hrs`,                         sub: `across ${healthLogs.length} logged days`,                            icon: "🌙", color: "#6366f1" },
+          { label: "Goal Progress", value: `${goalProgress}%`,                        sub: `${goals.filter(g => g.is_completed).length}/${goals.length} done`,   icon: "🎯", color: "#7c3aed" },
+        ].map(({ label, value, sub, icon, color }) => (
           <div key={label} style={card}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
               <p style={{ margin: 0, fontSize: "13px", color: muted }}>{label}</p>
-              <span style={{ fontSize: "18px" }}>{icon}</span>
+              <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: color + "20", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>{icon}</div>
             </div>
-            <p style={{ margin: "0 0 6px", fontSize: "28px", fontWeight: "700", color: text }}>{value}</p>
-            <p style={{ margin: 0, fontSize: "13px", color: up ? "#10b981" : "#ef4444" }}>{change} vs last month</p>
+            <p style={{ margin: "0 0 6px", fontSize: "26px", fontWeight: "700", color: text }}>{value}</p>
+            <p style={{ margin: 0, fontSize: "13px", color: muted }}>{sub}</p>
           </div>
         ))}
       </div>
 
-      {/* Charts Row — Spending vs Saving & Wellness Radar */}
       <div className="responsive-grid-2-1" style={{ marginBottom: "20px" }}>
-        {/* Bar Chart */}
+
+        {/* Monthly chart */}
         <div style={card}>
-          <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>Spending vs Saving Trend</h3>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={monthlyData}>
-              <XAxis dataKey="month" tick={{ fontSize: 11, fill: muted }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: muted }} axisLine={false} tickLine={false} />
-              <Tooltip contentStyle={{ background: dark ? "#1a1a2e" : "#fff", border: "none", borderRadius: "8px", fontSize: "12px" }} />
-              <Bar dataKey="spent" fill="#ef4444" radius={[4, 4, 0, 0]} name="Spent" />
-              <Bar dataKey="saved" fill="#10b981" radius={[4, 4, 0, 0]} name="Saved" />
-            </BarChart>
-          </ResponsiveContainer>
+          <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>Spending vs Income (Last 5 Months)</h3>
+          {monthlyData.every(m => m.spent === 0 && m.saved === 0) ? (
+            <p style={{ fontSize: "14px", color: muted }}>No data yet. Add transactions to see trends.</p>
+          ) : (
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={monthlyData}>
+                <XAxis dataKey="month" tick={{ fontSize: 11, fill: muted }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 11, fill: muted }} axisLine={false} tickLine={false} />
+                <Tooltip contentStyle={{ background: dark ? "#1a1a2e" : "#fff", border: "none", borderRadius: "8px", fontSize: "12px" }} formatter={v => `₹${v.toLocaleString("en-IN")}`} />
+                <Bar dataKey="spent" fill="#ef4444" radius={[4, 4, 0, 0]} name="Spent" />
+                <Bar dataKey="saved" fill="#10b981" radius={[4, 4, 0, 0]} name="Income" />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </div>
 
-        {/* Radar Chart */}
+        {/* Wellness radar */}
         <div style={card}>
           <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>Wellness Score</h3>
           <ResponsiveContainer width="100%" height={200}>
@@ -96,15 +144,11 @@ export default function Reports() {
         </div>
       </div>
 
-      {/* AI Monthly Insights */}
+      {/* AI Insights */}
       <div style={card}>
-        <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>🤖 AI Monthly Insights</h3>
-        <div className="responsive-grid-3" style={{}}>
-          {[
-            { icon: "💰", title: "Spending Alert", msg: "You spent 28% more on food this month. Consider meal prepping to save ₹800+.", color: "#f97316" },
-            { icon: "🌙", title: "Sleep Tip", msg: "Your average sleep dropped to 6.8hrs. Try setting a 10:30 PM bedtime reminder.", color: "#6366f1" },
-            { icon: "🎯", title: "Goal Progress", msg: "You're 63% to your savings goal! At this rate you'll hit it in 3 weeks.", color: "#10b981" },
-          ].map(({ icon, title, msg, color }) => (
+        <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>🤖 Insights</h3>
+        <div className="responsive-grid-3">
+          {insights.map(({ icon, title, msg, color }) => (
             <div key={title} style={{ padding: "16px", borderRadius: "12px", background: color + "15", border: `1px solid ${color}30` }}>
               <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
                 <span style={{ fontSize: "18px" }}>{icon}</span>
