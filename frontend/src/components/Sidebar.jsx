@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTheme } from "./ThemeContext";
 import { useUser } from "@clerk/clerk-react";
@@ -18,6 +19,16 @@ export default function Sidebar() {
   const location = useLocation();
   const { dark } = useTheme();
   const { user } = useUser();
+  const [profilePhoto, setProfilePhoto] = useState(localStorage.getItem("pocketBuddyProfilePhoto") || "");
+
+  // Listen for photo updates from Settings
+  useEffect(() => {
+    const handleUpdate = () => {
+      setProfilePhoto(localStorage.getItem("pocketBuddyProfilePhoto") || "");
+    };
+    window.addEventListener("profilePhotoUpdated", handleUpdate);
+    return () => window.removeEventListener("profilePhotoUpdated", handleUpdate);
+  }, []);
 
   const bg = dark ? "#1a1a2e" : "#ffffff";
   const border = dark ? "#2d2d44" : "#f3f4f6";
@@ -54,14 +65,14 @@ export default function Sidebar() {
               marginBottom: "4px",
               background: active ? activeBg : "transparent",
               color: active ? activeColor : textColor,
-              fontWeight: active ? "600" : "400", fontSize: "13px",
+              fontWeight: active ? "600" : "400", fontSize: "15px",
               transition: "all 0.2s"
             }}>
               <img
                 src={icon}
                 alt={label}
                 style={{
-                  width: "22px", height: "22px", objectFit: "contain",
+                  width: "26px", height: "26px", objectFit: "contain",
                   borderRadius: "6px",
                   opacity: active ? 1 : 0.75
                 }}
@@ -75,9 +86,18 @@ export default function Sidebar() {
       {/* User */}
       <div style={{ padding: "16px 20px", borderTop: `1px solid ${border}` }}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#7c3aed", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", color: "white", fontWeight: "600" }}>
-            {user?.firstName?.[0] || "A"}
-          </div>
+          {(profilePhoto || user?.imageUrl) ? (
+            <img
+              key={profilePhoto || user?.imageUrl}
+              src={profilePhoto || user?.imageUrl}
+              alt={user?.firstName || "User"}
+              style={{ width: "36px", height: "36px", borderRadius: "50%", objectFit: "cover", background: "#7c3aed" }}
+            />
+          ) : (
+            <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#7c3aed", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", color: "white", fontWeight: "600" }}>
+              {user?.firstName?.[0] || "A"}
+            </div>
+          )}
           <div>
             <p style={{ margin: 0, fontSize: "12px", fontWeight: "600", color: dark ? "#f1f5f9" : "#1f2937" }}>{user?.firstName || "Ayushi"}</p>
             <p style={{ margin: 0, fontSize: "10px", color: textColor }}>Student</p>

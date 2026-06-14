@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useTheme } from "../components/ThemeContext";
 import DashboardLayout from "../components/DashboardLayout";
 import { useUser, useClerk } from "@clerk/clerk-react";
@@ -13,6 +13,33 @@ export default function Settings() {
 
   const [notifications, setNotifications] = useState({ daily: true, budget: true, health: false, journal: true });
   const [budget, setBudget] = useState("10000");
+  const [uploading, setUploading] = useState(false);
+  const [profilePhoto, setProfilePhoto] = useState(localStorage.getItem("pocketBuddyProfilePhoto") || "");
+  const fileInputRef = useRef(null);
+
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      // Try Clerk upload first
+      if (user?.setProfileImage) {
+        await user.setProfileImage({ file });
+        await user.reload();
+      }
+    } catch (err) {
+      console.error("Clerk upload failed:", err);
+    }
+    // Always save to localStorage as fallback
+    const reader = new FileReader();
+    reader.onload = () => {
+      localStorage.setItem("pocketBuddyProfilePhoto", reader.result);
+      setProfilePhoto(reader.result);
+      window.dispatchEvent(new Event("profilePhotoUpdated"));
+      setUploading(false);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const card = {
     background: dark ? "#1a1a2e" : "#ffffff",
@@ -56,8 +83,26 @@ export default function Settings() {
           <div style={card}>
             <h3 style={{ margin: "0 0 16px", fontSize: "15px", fontWeight: "600", color: text }}>👤 Profile</h3>
             <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "20px" }}>
-              <div style={{ width: "56px", height: "56px", borderRadius: "50%", background: "#7c3aed", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px", color: "white", fontWeight: "700" }}>
-                {user?.firstName?.[0] || "A"}
+              <div style={{ position: "relative", cursor: "pointer" }} onClick={() => fileInputRef.current?.click()}>
+                {(profilePhoto || user?.imageUrl) ? (
+                  <img
+                    key={profilePhoto || user?.imageUrl}
+                    src={profilePhoto || user?.imageUrl}
+                    alt={user?.firstName || "User"}
+                    style={{ width: "56px", height: "56px", borderRadius: "50%", objectFit: "cover", background: "#7c3aed" }}
+                  />
+                ) : (
+                  <div style={{ width: "56px", height: "56px", borderRadius: "50%", background: "#7c3aed", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px", color: "white", fontWeight: "700" }}>
+                    {user?.firstName?.[0] || "A"}
+                  </div>
+                )}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoUpload}
+                  style={{ display: "none" }}
+                />
               </div>
               <div>
                 <p style={{ margin: "0 0 2px", fontSize: "15px", fontWeight: "600", color: text }}>{user?.firstName} {user?.lastName}</p>
