@@ -133,7 +133,7 @@ export default function AICompanion() {
                 <p style={{ margin: "0 0 4px", fontSize: "15px", fontWeight: "700", color: "#7c3aed" }}>{friendName}</p>
                 <p style={{ margin: 0, fontSize: "13px", color: "#10b981" }}>● Online</p>
               </div>
-              <p style={{ margin: 0, fontSize: "13px", color: muted, textAlign: "center", lineHeight: "1.5" }}>Your personal AI best friend — always here for you 💜</p>
+              <p style={{ margin: 0, fontSize: "13px", color: muted, textAlign: "center", lineHeight: "1.5" }}>Always here for you 💜</p>
             </div>
           )}
 
