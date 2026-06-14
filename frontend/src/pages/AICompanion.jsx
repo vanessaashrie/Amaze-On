@@ -18,7 +18,7 @@ const quickActions = [
   { label: "Plan my day", emoji: "📅" },
 ];
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export default function AICompanion() {
   const { dark } = useTheme();
@@ -76,24 +76,21 @@ export default function AICompanion() {
     setLoading(true);
 
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
+      const res = await fetch(`${BACKEND_URL}/companion/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-6",
-          max_tokens: 1000,
-          system: `You are ${friendName}, a warm, caring AI best friend for a student/young professional. You help with personal finance, health, mental wellness and motivation. Keep responses friendly, concise and supportive. Use emojis occasionally. Address the user warmly.`,
-          messages: [
-            ...messages.filter(m => m.from !== "ai" || messages.indexOf(m) > 0).map(m => ({
-              role: m.from === "user" ? "user" : "assistant",
-              content: m.text
-            })),
-            { role: "user", content: msg }
-          ]
+          message: msg,
+          history: messages.filter((m, idx) => idx > 0).map(m => ({
+            role: m.from === "user" ? "user" : "assistant",
+            content: m.text
+          })),
+          friend_name: friendName,
+          user_id: clerkUser?.id
         })
       });
       const data = await res.json();
-      const reply = data.content?.[0]?.text || "I'm here for you! 💜";
+      const reply = data.reply || data.message || "I'm here for you! 💜";
       setMessages(prev => [...prev, { from: "ai", text: reply }]);
     } catch {
       setMessages(prev => [...prev, { from: "ai", text: "Oops, something went wrong. Try again! 💜" }]);

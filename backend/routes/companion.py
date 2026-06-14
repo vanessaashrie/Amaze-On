@@ -24,9 +24,10 @@ bedrock = boto3.client(
 
 
 class ChatRequest(BaseModel):
-    userId: str
+    user_id: str
     message: str
     history: list = []
+    friend_name: str = "Nova"
 
 
 def detect_and_log(user_id: str, message: str) -> str:
@@ -127,19 +128,19 @@ Examples:
 def chat(req: ChatRequest):
     try:
         # Fetch fresh user data
-        journals     = get_journal_entries(req.userId)[:5]
-        transactions = get_transactions(req.userId)[:10]
-        health       = get_health_logs(req.userId)[:10]
-        goals        = get_goals(req.userId)[:10]
+        journals     = get_journal_entries(req.user_id)[:5]
+        transactions = get_transactions(req.user_id)[:10]
+        health       = get_health_logs(req.user_id)[:10]
+        goals        = get_goals(req.user_id)[:10]
 
-        print("USER ID:", req.userId)
+        print("USER ID:", req.user_id)
         print("JOURNALS:", len(journals))
         print("TRANSACTIONS:", len(transactions))
         print("HEALTH:", len(health))
         print("GOALS:", len(goals))
 
         # Detect and log any health/money data in the message
-        logged_summary = detect_and_log(req.userId, req.message)
+        logged_summary = detect_and_log(req.user_id, req.message)
         if logged_summary:
             print("AUTO-LOGGED:", logged_summary)
 
@@ -178,7 +179,7 @@ GOALS:
             modelId=BEDROCK_MODEL_ID,
             system=[{
                 "text": (
-                    "You are Nova, a warm and supportive AI companion. "
+                    f"You are {req.friend_name}, a warm and supportive AI companion. "
                     "You have access to the user's personal data below. "
                     "Reference it naturally when relevant. "
                     "When the user mentions spending money or health activity, confirm what was logged. "
