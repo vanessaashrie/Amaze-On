@@ -17,6 +17,7 @@ def list_goals(user_id: str):
     return {"goals": goals}
 
 @router.patch("/update")
+@router.post("/update")
 def update_goal(data: GoalUpdateRequest):
     # clerk_id from frontend maps to userId in DynamoDB
     updated = update_goal_progress(

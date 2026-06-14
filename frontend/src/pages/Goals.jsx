@@ -75,7 +75,7 @@ export default function Goals() {
     const newCurrent = updateInputs[goal.goal_id] ?? goal.current;
     const isCompleted = parseFloat(newCurrent) >= parseFloat(goal.target);
     try {
-      await api.patch("/goals/update", {
+      await api.post("/goals/update", {
         clerk_id: user.id,
         goal_id: goal.goal_id,
         current: newCurrent.toString(),
