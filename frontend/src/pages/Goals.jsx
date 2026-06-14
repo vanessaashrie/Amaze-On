@@ -96,11 +96,11 @@ export default function Goals() {
     <DashboardLayout>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
         <div>
-          <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700", color: text, display: "flex", alignItems: "center", gap: "10px" }}>
+          <h2 style={{ margin: "0 0 4px", fontSize: "22px", fontWeight: "700", color: text, display: "flex", alignItems: "center", gap: "10px" }}>
             <img src="/goals.png" alt="goals" style={{ width: "32px", height: "32px", objectFit: "contain" }} />
             Goals
           </h2>
-          <p style={{ margin: 0, fontSize: "13px", color: muted }}>Set, track and achieve your personal goals.</p>
+          <p style={{ margin: 0, fontSize: "14px", color: muted }}>Set, track and achieve your personal goals.</p>
         </div>
         <button onClick={() => setShowForm(!showForm)} style={{
           padding: "10px 20px", borderRadius: "12px", border: "none",
@@ -154,8 +154,8 @@ export default function Goals() {
                     <img src="/goals.png" alt="goal" style={{ width: "26px", height: "26px", objectFit: "contain" }} />
                   </div>
                   <div>
-                    <p style={{ margin: "0 0 2px", fontSize: "14px", fontWeight: "600", color: text }}>{goal.title}</p>
-                    <p style={{ margin: 0, fontSize: "11px", color: muted }}>{goal.category} · Due {goal.due_date || "—"}</p>
+                    <p style={{ margin: "0 0 2px", fontSize: "15px", fontWeight: "600", color: text }}>{goal.title}</p>
+                    <p style={{ margin: 0, fontSize: "12px", color: muted }}>{goal.category} · Due {goal.due_date || "—"}</p>
                   </div>
                 </div>
                 <span style={{ fontSize: "18px", fontWeight: "700", color }}>{progress}%</span>
@@ -166,7 +166,7 @@ export default function Goals() {
               </div>
 
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "8px" }}>
-                <p style={{ margin: 0, fontSize: "12px", color: muted }}>{goal.current} / {goal.target}</p>
+                <p style={{ margin: 0, fontSize: "13px", color: muted }}>{goal.current} / {goal.target}</p>
                 <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
                   <input
                     type="number"
@@ -189,9 +189,9 @@ export default function Goals() {
       </div>
 
       <div style={card}>
-        <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>🏆 Completed Goals</h3>
+        <h3 style={{ margin: "0 0 16px", fontSize: "16px", fontWeight: "600", color: text }}>🏆 Completed Goals</h3>
         {completedGoals.length === 0 && (
-          <p style={{ fontSize: "13px", color: muted }}>No completed goals yet. Keep going!</p>
+          <p style={{ fontSize: "14px", color: muted }}>No completed goals yet. Keep going!</p>
         )}
         {completedGoals.map((goal) => (
           <div key={goal.goal_id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px 0", borderBottom: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}` }}>
@@ -199,8 +199,8 @@ export default function Goals() {
               <img src="/goals.png" alt="goal" style={{ width: "22px", height: "22px", objectFit: "contain" }} />
             </div>
             <div style={{ flex: 1 }}>
-              <p style={{ margin: "0 0 2px", fontSize: "13px", fontWeight: "500", color: text }}>{goal.title}</p>
-              <p style={{ margin: 0, fontSize: "11px", color: muted }}>Completed · {goal.due_date || "—"}</p>
+              <p style={{ margin: "0 0 2px", fontSize: "14px", fontWeight: "500", color: text }}>{goal.title}</p>
+              <p style={{ margin: 0, fontSize: "12px", color: muted }}>Completed · {goal.due_date || "—"}</p>
             </div>
             <span style={{ fontSize: "18px" }}>✅</span>
           </div>

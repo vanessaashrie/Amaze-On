@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTheme } from "./ThemeContext";
-import { useUser } from "@clerk/clerk-react";
+import { useUser, useClerk } from "@clerk/clerk-react";
 
 const navItems = [
   { icon: "/home.png", label: "Dashboard", path: "/dashboard" },
@@ -19,7 +19,9 @@ export default function Sidebar() {
   const location = useLocation();
   const { dark } = useTheme();
   const { user } = useUser();
+  const { signOut } = useClerk();
   const [profilePhoto, setProfilePhoto] = useState(localStorage.getItem("pocketBuddyProfilePhoto") || "");
+  const [showMenu, setShowMenu] = useState(false);
 
   // Listen for photo updates from Settings
   useEffect(() => {
@@ -84,8 +86,45 @@ export default function Sidebar() {
       </nav>
 
       {/* User */}
-      <div style={{ padding: "16px 20px", borderTop: `1px solid ${border}` }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+      <div style={{ padding: "16px 20px", borderTop: `1px solid ${border}`, position: "relative" }}>
+        {/* Sign Out Popup */}
+        {showMenu && (
+          <div style={{
+            position: "absolute", bottom: "72px", left: "12px", right: "12px",
+            background: dark ? "#1a1a2e" : "#ffffff",
+            border: `1px solid ${dark ? "#2d2d44" : "#e9d5ff"}`,
+            borderRadius: "12px",
+            padding: "6px",
+            boxShadow: dark ? "0 4px 16px rgba(0,0,0,0.4)" : "0 4px 16px rgba(124,58,237,0.12)",
+            zIndex: 100
+          }}>
+            <button
+              onClick={() => signOut(() => navigate("/"))}
+              style={{
+                width: "100%", padding: "10px 14px", borderRadius: "8px",
+                border: "none", background: dark ? "#2d2d44" : "#f5f3ff",
+                color: dark ? "#a78bfa" : "#7c3aed", fontSize: "13px", fontWeight: "600",
+                cursor: "pointer", textAlign: "left",
+                display: "flex", alignItems: "center", gap: "8px",
+                transition: "background 0.2s"
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = dark ? "#3d3d5c" : "#ede9fe"}
+              onMouseLeave={(e) => e.currentTarget.style.background = dark ? "#2d2d44" : "#f5f3ff"}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={dark ? "#a78bfa" : "#7c3aed"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              Sign Out
+            </button>
+          </div>
+        )}
+
+        <div
+          style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}
+          onClick={() => setShowMenu(!showMenu)}
+        >
           {(profilePhoto || user?.imageUrl) ? (
             <img
               key={profilePhoto || user?.imageUrl}
