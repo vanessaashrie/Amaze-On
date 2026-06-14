@@ -19,6 +19,7 @@ journal_table = dynamodb.Table("JournalEntries")
 money_table   = dynamodb.Table("Money")
 health_table  = dynamodb.Table("Health")
 goals_table   = dynamodb.Table("Goals")
+cycle_table   = dynamodb.Table("CycleTracker")
 
 
 def create_or_update_user(data: dict):
@@ -154,3 +155,30 @@ def update_goal_progress(user_id: str, goal_id: str, current: str, is_completed:
         ReturnValues="ALL_NEW"
     )
     return response.get("Attributes", {})
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# 🌸 CYCLE TRACKER
+# partition key: userId  |  sort key: period_id
+# ═══════════════════════════════════════════════════════════════════════
+
+def log_period(user_id: str, start_date: str, end_date: str = None, symptoms: list = [], flow: str = "medium") -> dict:
+    item = {
+        "userId":     user_id,
+        "period_id":  str(uuid.uuid4()),
+        "start_date": start_date,
+        "end_date":   end_date or "",
+        "symptoms":   symptoms,
+        "flow":       flow,
+        "logged_at":  datetime.now(timezone.utc).isoformat(),
+    }
+    cycle_table.put_item(Item=item)
+    return item
+
+
+def get_cycle_history(user_id: str) -> list:
+    response = cycle_table.query(
+        KeyConditionExpression=Key("userId").eq(user_id)
+    )
+    items = response.get("Items", [])
+    return sorted(items, key=lambda x: x.get("start_date", ""), reverse=True)
