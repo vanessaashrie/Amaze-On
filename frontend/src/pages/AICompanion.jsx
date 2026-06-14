@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { useTheme } from "../components/ThemeContext";
 import DashboardLayout from "../components/DashboardLayout";
+import { useResponsive } from "../hooks/useMediaQuery";
 
 const suggestions = [
   "How can I save more money?",
@@ -22,6 +23,7 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
 export default function AICompanion() {
   const { dark } = useTheme();
   const { user: clerkUser } = useUser();
+  const { isMobile, isTablet } = useResponsive();
 
   const localUser = JSON.parse(localStorage.getItem("pocketBuddyUser") || "{}");
   const [friendName, setFriendName] = useState(localUser.friend_name || localUser.friendName || "Nova");
@@ -117,7 +119,7 @@ export default function AICompanion() {
         <p style={{ margin: 0, fontSize: "13px", color: muted }}>Chat with {friendName}, your personal AI best friend.</p>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: "20px", height: "calc(100vh - 220px)" }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 280px", gap: "20px", height: isMobile ? "auto" : "calc(100vh - 220px)" }}>
 
         {/* Chat Area */}
         <div style={{ ...card, display: "flex", overflow: "hidden" }}>

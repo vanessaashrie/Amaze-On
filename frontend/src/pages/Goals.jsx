@@ -142,7 +142,7 @@ export default function Goals() {
         <p style={{ color: muted, fontSize: "13px", marginBottom: "20px" }}>No active goals yet. Add one above!</p>
       )}
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: "16px", marginBottom: "24px" }}>
+      <div className="responsive-grid-2" style={{ marginBottom: "24px" }}>
         {activeGoals.map((goal) => {
           const color = CATEGORY_COLORS[goal.category] || "#7c3aed";
           const progress = Math.min(100, Math.round((parseFloat(goal.current) / parseFloat(goal.target)) * 100)) || 0;

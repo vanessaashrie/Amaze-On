@@ -114,7 +114,7 @@ export default function Health() {
       </div>
 
       {/* Stat Cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "16px", marginBottom: "20px" }}>
+      <div className="responsive-grid-4" style={{ marginBottom: "20px" }}>
         {[
           { label: "Sleep Last Night", value: todayLog?.sleep_hours ? `${todayLog.sleep_hours} hrs` : "—", sub: "Goal: 7-8 hrs", icon: "🌙", color: "#6366f1" },
           { label: "Steps Today", value: todayLog?.steps ? parseInt(todayLog.steps).toLocaleString("en-IN") : "—", sub: "Goal: 10,000", icon: "👟", color: "#10b981" },
@@ -132,7 +132,7 @@ export default function Health() {
         ))}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", marginBottom: "20px" }}>
+      <div className="responsive-grid-2" style={{ marginBottom: "20px" }}>
         <div style={card}>
           <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>Sleep This Week</h3>
           {sleepData.length === 0 ? (
@@ -166,7 +166,7 @@ export default function Health() {
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+      <div className="responsive-grid-2">
 
         {/* Water Tracker */}
         <div style={card}>

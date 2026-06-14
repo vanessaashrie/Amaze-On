@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { useTheme } from "../components/ThemeContext";
 import DashboardLayout from "../components/DashboardLayout";
+import { useResponsive } from "../hooks/useMediaQuery";
 import api from "../api";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, LineChart, Line, XAxis, YAxis } from "recharts";
 
@@ -22,6 +23,8 @@ export default function Money() {
   const [form, setForm] = useState({ name: "", amount: "", category: "Food", type: "expense" });
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const { isMobile } = useResponsive();
 
   const card = {
     background: dark ? "#1a1a2e" : "#ffffff",
@@ -107,7 +110,7 @@ export default function Money() {
       {showForm && (
         <div style={{ ...card, marginBottom: "20px" }}>
           <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>New Transaction</h3>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr auto", gap: "12px", alignItems: "end" }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr 1fr auto", gap: "12px", alignItems: "end" }}>
             <div>
               <label style={{ fontSize: "12px", color: muted, display: "block", marginBottom: "6px" }}>Description</label>
               <input placeholder="e.g. Swiggy" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} style={inputStyle} />
@@ -137,7 +140,7 @@ export default function Money() {
         </div>
       )}
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "16px", marginBottom: "20px" }}>
+      <div className="responsive-grid-4" style={{ marginBottom: "20px" }}>
         {[
           { label: "Total Spent", value: `₹${totalSpent.toLocaleString("en-IN")}`, icon: "📤", color: "#ef4444" },
           { label: "Total Income", value: `₹${totalIncome.toLocaleString("en-IN")}`, icon: "📥", color: "#10b981" },
@@ -154,7 +157,7 @@ export default function Money() {
         ))}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", marginBottom: "20px" }}>
+      <div className="responsive-grid-2" style={{ marginBottom: "20px" }}>
         <div style={card}>
           <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>Spending Breakdown</h3>
           {pieData.length === 0 ? (

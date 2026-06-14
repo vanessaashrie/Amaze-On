@@ -77,7 +77,7 @@ export default function Settings() {
         <p style={{ margin: 0, fontSize: "14px", color: muted }}>Manage your account, preferences and notifications.</p>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+      <div className="responsive-grid-2">
         <div>
           {/* Profile */}
           <div style={card}>

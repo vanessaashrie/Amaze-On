@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { useTheme } from "../components/ThemeContext";
 import DashboardLayout from "../components/DashboardLayout";
+import { useResponsive } from "../hooks/useMediaQuery";
 import {
   LineChart,
   Line,
@@ -114,14 +115,7 @@ export default function Dashboard() {
       </div>
 
       {/* TOP CARDS */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4,1fr)",
-          gap: "16px",
-          marginBottom: "20px",
-        }}
-      >
+      <div className="responsive-grid-4" style={{ marginBottom: "20px" }}>
         {[
           { label: "Budget Left", value: "₹2,150", sub: "of ₹3,000", icon: "💰", color: "#7c3aed" },
           { label: "Today's Spending", value: "₹850", sub: "↑ 12% vs yesterday", icon: "📈", color: "#f97316" },

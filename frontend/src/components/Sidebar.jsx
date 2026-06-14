@@ -14,7 +14,7 @@ const navItems = [
   { icon: "/settings.png", label: "Settings", path: "/settings" },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ onClose }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { dark } = useTheme();
@@ -22,6 +22,11 @@ export default function Sidebar() {
   const { signOut } = useClerk();
   const [profilePhoto, setProfilePhoto] = useState(localStorage.getItem("pocketBuddyProfilePhoto") || "");
   const [showMenu, setShowMenu] = useState(false);
+
+  const handleNav = (path) => {
+    navigate(path);
+    if (onClose) onClose();
+  };
 
   // Listen for photo updates from Settings
   useEffect(() => {
@@ -40,10 +45,10 @@ export default function Sidebar() {
 
   return (
     <div style={{
-      width: "200px", flexShrink: 0, background: bg,
+      width: "100%", background: bg,
       borderRight: `1px solid ${border}`, display: "flex",
       flexDirection: "column", height: "100vh",
-      position: "sticky", top: 0, padding: "24px 0"
+      padding: "24px 0"
     }}>
       {/* Logo */}
       <div style={{ padding: "0 20px 24px", borderBottom: `1px solid ${border}` }}>
@@ -61,7 +66,7 @@ export default function Sidebar() {
         {navItems.map(({ icon, label, path }) => {
           const active = location.pathname === path;
           return (
-            <div key={path} onClick={() => navigate(path)} style={{
+            <div key={path} onClick={() => handleNav(path)} style={{
               display: "flex", alignItems: "center", gap: "10px",
               padding: "10px 12px", borderRadius: "10px", cursor: "pointer",
               marginBottom: "4px",

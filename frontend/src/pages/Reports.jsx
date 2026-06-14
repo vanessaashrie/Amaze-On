@@ -41,7 +41,7 @@ export default function Reports() {
       </div>
 
       {/* Summary Cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "16px", marginBottom: "20px" }}>
+      <div className="responsive-grid-4" style={{ marginBottom: "20px" }}>
         {[
           { label: "Total Spent (May)", value: "₹6,800", change: "+12%", up: true, icon: "📤" },
           { label: "Total Saved (May)", value: "₹1,500", change: "+8%", up: true, icon: "💰" },
@@ -59,7 +59,7 @@ export default function Reports() {
         ))}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "20px", marginBottom: "20px" }}>
+      <div className="responsive-grid-2-1" style={{ marginBottom: "20px" }}>
         <div style={card}>
           <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>Spending vs Saving Trend</h3>
           <ResponsiveContainer width="100%" height={200}>
@@ -87,7 +87,7 @@ export default function Reports() {
 
       <div style={card}>
         <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>🤖 AI Monthly Insights</h3>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
+        <div className="responsive-grid-3" style={{}}>
           {[
             { icon: "💰", title: "Spending Alert", msg: "You spent 28% more on food this month. Consider meal prepping to save ₹800+.", color: "#f97316" },
             { icon: "🌙", title: "Sleep Tip", msg: "Your average sleep dropped to 6.8hrs. Try setting a 10:30 PM bedtime reminder.", color: "#6366f1" },
