@@ -27,7 +27,7 @@ Students and young professionals juggle **finances, health, mental wellness, and
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend (what you see on screen) | React 18 (UI library), Vite (build tool), React Router (page navigation), Recharts (charts), Axios (API calls) |
+| Frontend | React 18 (UI library), Vite (build tool), React Router (page navigation), Recharts (charts), Axios (API calls) |
 | Login & Authentication | Clerk (handles Google sign-in and email/password login) |
 | Backend (server logic) | FastAPI (a Python web framework), Uvicorn (a lightweight server runner) |
 | Database (data storage) | AWS DynamoDB (a cloud-hosted NoSQL database with 6 tables) |
