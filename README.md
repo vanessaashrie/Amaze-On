@@ -6,9 +6,9 @@
 
 ## 🎯 Problem We're Solving
 
-Students and young professionals juggle **finances, health, mental wellness, and goals** across multiple disconnected apps. There's no single place that understands them holistically — and no one to talk to at 2 AM when stressed about money or health.
+Students and young professionals struggle to manage money, health, and goals across scattered apps — with no personal support when they need it most.
 
-**Pocket Buddy** solves this by combining life tracking with a personalized AI best friend that knows your context, automatically saves data from conversations, and proactively supports your well-being.
+**Pocket Buddy** brings it all together in one place, with an AI best friend that tracks your life, chats with you, and saves data automatically from your conversations.
 
 ---
 
