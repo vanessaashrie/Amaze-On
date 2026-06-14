@@ -1,3 +1,7 @@
+"""
+cycle.py — Menstrual cycle tracking and prediction routes.
+"""
+
 from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import Optional, List
@@ -7,7 +11,10 @@ from datetime import datetime, timedelta
 router = APIRouter()
 
 
+# --- Request Models ---
+
 class PeriodLog(BaseModel):
+    """Schema for logging a period entry."""
     user_id: str
     start_date: str
     end_date: Optional[str] = None
@@ -15,7 +22,10 @@ class PeriodLog(BaseModel):
     flow: str = "medium"
 
 
+# --- Helper Functions ---
+
 def predict_next_cycle(history: list) -> dict:
+    """Predict the next period, fertile window, and ovulation based on cycle history."""
     if len(history) < 2:
         return {
             "next_period": None,
@@ -54,8 +64,11 @@ def predict_next_cycle(history: list) -> dict:
     }
 
 
+# --- Routes ---
+
 @router.post("/log")
 def log_period_route(data: PeriodLog):
+    """Log a new period entry with start/end dates, flow, and symptoms."""
     entry = log_period(
         data.user_id,
         data.start_date,
@@ -68,6 +81,7 @@ def log_period_route(data: PeriodLog):
 
 @router.get("/{user_id}")
 def get_cycle(user_id: str):
+    """Retrieve cycle history and next-cycle predictions for the user."""
     history = get_cycle_history(user_id)
     prediction = predict_next_cycle(history)
     return {"history": history, "prediction": prediction}

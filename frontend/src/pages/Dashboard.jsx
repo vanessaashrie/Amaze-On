@@ -1,3 +1,6 @@
+// Dashboard.jsx — Main dashboard with budget overview, spending chart, and recent transactions
+
+// --- Imports ---
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { useTheme } from "../components/ThemeContext";
@@ -13,7 +16,9 @@ import {
 } from "recharts";
 
 import { getUserProfile } from "../api";
+import api from "../api";
 
+// --- Constants ---
 const spendingData = [
   { day: "Mon", amount: 320 },
   { day: "Tue", amount: 480 },
@@ -33,15 +38,22 @@ const categories = [
   { icon: "📦", label: "Others", amount: "₹420", color: "#6b7280" },
 ];
 
+// --- Component ---
 export default function Dashboard() {
   const { dark } = useTheme();
   const { user: clerkUser } = useUser();
 
+  // --- State ---
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [totalSpent, setTotalSpent] = useState(0);
 
-  // ---------------- FETCH PROFILE ----------------
+  const monthlyBudget = Number(localStorage.getItem("pocketBuddyBudget") || "10000");
+  const budgetLeft = monthlyBudget - totalSpent;
+
+  // --- Effects ---
+  // Fetch user profile and spending data
   useEffect(() => {
     if (!clerkUser?.id) return;
 
@@ -50,15 +62,11 @@ export default function Dashboard() {
     getUserProfile(clerkUser.id)
       .then((data) => {
         setProfile(data);
-
-        // single source of truth cache
         localStorage.setItem("userProfile", JSON.stringify(data));
       })
       .catch((err) => {
         console.warn("Profile fetch failed:", err.message);
-
         const cached = localStorage.getItem("userProfile");
-
         if (cached) {
           setProfile(JSON.parse(cached));
         } else {
@@ -66,16 +74,27 @@ export default function Dashboard() {
         }
       })
       .finally(() => setLoading(false));
+
+    // Fetch spending to calculate budget left
+    api.get(`/money/${clerkUser.id}`)
+      .then((res) => {
+        const transactions = res.data.transactions || [];
+        const spent = transactions
+          .filter(t => t.type === "expense")
+          .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
+        setTotalSpent(spent);
+      })
+      .catch(() => { });
   }, [clerkUser?.id]);
 
-  // ---------------- SAFE VALUES ----------------
+  // --- Derived Values ---
   const displayName =
     profile?.name || clerkUser?.firstName || "there";
 
   const friendName =
     profile?.friend_name || "Buddy";
 
-  // ---------------- STYLES ----------------
+  // --- Styles ---
   const card = {
     background: dark ? "#1a1a2e" : "#ffffff",
     borderRadius: "16px",
@@ -86,7 +105,7 @@ export default function Dashboard() {
   const text = dark ? "#f1f5f9" : "#1f2937";
   const muted = dark ? "#94a3b8" : "#6b7280";
 
-  // ---------------- LOADING ----------------
+  // --- Loading State ---
   if (loading && !profile) {
     return (
       <DashboardLayout>
@@ -95,9 +114,10 @@ export default function Dashboard() {
     );
   }
 
+  // --- Render ---
   return (
     <DashboardLayout>
-      {/* HEADER */}
+      {/* Header */}
       <div style={{ marginBottom: "20px" }}>
         <h2 style={{ margin: 0, fontSize: "26px", color: text }}>
           Hey {displayName} 👋
@@ -114,11 +134,11 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* TOP CARDS */}
+      {/* Top Stat Cards */}
       <div className="responsive-grid-4" style={{ marginBottom: "20px" }}>
         {[
-          { label: "Budget Left", value: "₹2,150", sub: "of ₹3,000", icon: "💰", color: "#7c3aed" },
-          { label: "Today's Spending", value: "₹850", sub: "↑ 12% vs yesterday", icon: "📈", color: "#f97316" },
+          { label: "Budget Left", value: `₹${budgetLeft.toLocaleString("en-IN")}`, sub: `of ₹${monthlyBudget.toLocaleString("en-IN")}`, icon: "💰", color: "#7c3aed" },
+          { label: "Total Spent", value: `₹${totalSpent.toLocaleString("en-IN")}`, sub: "this month", icon: "📈", color: "#f97316" },
           { label: "Stress Level", value: "Moderate", sub: "Based on journal", icon: "🧠", color: "#f59e0b" },
           { label: "Sleep", value: "6.5 hrs", sub: "Goal: 7-8 hrs", icon: "🌙", color: "#3b82f6" },
         ].map((item) => (
@@ -139,7 +159,7 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* CHART */}
+      {/* Spending Trend Chart */}
       <div style={card}>
         <h3 style={{ color: text, fontSize: "18px" }}>Spending Trend</h3>
 
@@ -158,7 +178,7 @@ export default function Dashboard() {
         </ResponsiveContainer>
       </div>
 
-      {/* TRANSACTIONS */}
+      {/* Recent Transactions */}
       <div style={{ ...card, marginTop: "20px" }}>
         <h3 style={{ color: text, fontSize: "18px" }}>Recent Transactions</h3>
 
@@ -177,8 +197,6 @@ export default function Dashboard() {
             }}
           >
             <span style={{ color: text }}>{t.name}</span>
-
-            {/* FIXED: no undefined color */}
             <span style={{ color: "#ef4444" }}>
               {t.amount}
             </span>

@@ -1,7 +1,13 @@
+// ThemeContext.jsx — Provides dark/light theme state and toggle to the entire app
+
+// --- Imports ---
 import { createContext, useContext, useState } from "react";
 
+// --- Context ---
 const ThemeContext = createContext();
 
+// --- Provider Component ---
+// Wraps the app with theme state (dark mode) persisted in localStorage
 export function ThemeProvider({ children }) {
   const [dark, setDark] = useState(() => localStorage.getItem("pocketBuddyDarkMode") === "true");
   const toggle = () => {
@@ -11,6 +17,8 @@ export function ThemeProvider({ children }) {
       return next;
     });
   };
+
+  // --- Render ---
   return (
     <ThemeContext.Provider value={{ dark, toggle }}>
       <div style={{
@@ -25,6 +33,8 @@ export function ThemeProvider({ children }) {
   );
 }
 
+// --- useTheme Hook ---
+// Convenience hook to consume the theme context
 export function useTheme() {
   return useContext(ThemeContext);
 }

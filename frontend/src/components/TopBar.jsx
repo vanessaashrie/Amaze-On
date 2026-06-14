@@ -1,7 +1,12 @@
+// TopBar.jsx — Top navigation bar with greeting, theme toggle, and mobile menu button
+
+// --- Imports ---
 import { useTheme } from "./ThemeContext";
 import { useUser } from "@clerk/clerk-react";
 import { useResponsive } from "../hooks/useMediaQuery";
 
+// --- Helpers ---
+// Returns a time-based greeting string
 function getGreeting() {
   const h = new Date().getHours();
   if (h < 12) return "Good Morning";
@@ -9,11 +14,13 @@ function getGreeting() {
   return "Good Evening";
 }
 
+// --- Component ---
 export default function TopBar({ onMenuClick, showMenu }) {
   const { dark, toggle } = useTheme();
   const { user } = useUser();
   const { isMobile } = useResponsive();
 
+  // --- Render ---
   return (
     <div style={{
       display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -44,6 +51,7 @@ export default function TopBar({ onMenuClick, showMenu }) {
         </div>
       </div>
 
+      {/* Theme toggle button */}
       <button onClick={toggle} style={{
         padding: isMobile ? "6px 12px" : "8px 16px", borderRadius: "20px", border: "none", cursor: "pointer",
         background: dark ? "#2d2d44" : "#f5f3ff",

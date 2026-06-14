@@ -1,14 +1,19 @@
+// DashboardLayout.jsx — Responsive layout shell with sidebar, topbar, and main content area
+
+// --- Imports ---
 import { useState } from "react";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
 import { useTheme } from "./ThemeContext";
 import { useResponsive } from "../hooks/useMediaQuery";
 
+// --- Component ---
 export default function DashboardLayout({ children }) {
     const { dark } = useTheme();
     const { isMobile, isTablet } = useResponsive();
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
+    // --- Render ---
     return (
         <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
             {/* Mobile overlay */}
@@ -35,6 +40,7 @@ export default function DashboardLayout({ children }) {
                 <Sidebar onClose={() => setSidebarOpen(false)} />
             </div>
 
+            {/* Main content area */}
             <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
                 <TopBar onMenuClick={() => setSidebarOpen(!sidebarOpen)} showMenu={isMobile} />
                 <main style={{

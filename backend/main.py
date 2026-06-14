@@ -1,3 +1,7 @@
+"""
+main.py — FastAPI application entry point with CORS configuration and route registration.
+"""
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
@@ -13,7 +17,7 @@ load_dotenv()
 
 app = FastAPI(title="Pocket Buddy API")
 
-# CORS
+# --- CORS Middleware ---
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://localhost:5174", "https://amaze-on-vanessas-projects-583e2db4.vercel.app"],
@@ -22,11 +26,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/")
 def root():
+    """Health check endpoint — confirms the backend is running."""
     return {"message": "Pocket Buddy backend running 🚀"}
 
-# ✅ PREFIX ONLY HERE
+
+# --- Route Registration ---
 app.include_router(auth_router,      prefix="/auth",      tags=["Auth"])
 app.include_router(journal_router,   prefix="/journal",   tags=["Journal"])
 app.include_router(money_router,     prefix="/money",     tags=["Money"])

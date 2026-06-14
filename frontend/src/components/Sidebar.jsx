@@ -1,8 +1,12 @@
+// Sidebar.jsx — Navigation sidebar with nav items, user profile, and sign-out menu
+
+// --- Imports ---
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTheme } from "./ThemeContext";
 import { useUser, useClerk } from "@clerk/clerk-react";
 
+// --- Constants ---
 const navItems = [
   { icon: "/home.png", label: "Dashboard", path: "/dashboard" },
   { icon: "/journal.png", label: "Journal", path: "/journal" },
@@ -14,6 +18,7 @@ const navItems = [
   { icon: "/settings.png", label: "Settings", path: "/settings" },
 ];
 
+// --- Component ---
 export default function Sidebar({ onClose }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -23,11 +28,13 @@ export default function Sidebar({ onClose }) {
   const [profilePhoto, setProfilePhoto] = useState(localStorage.getItem("pocketBuddyProfilePhoto") || "");
   const [showMenu, setShowMenu] = useState(false);
 
+  // --- Handlers ---
   const handleNav = (path) => {
     navigate(path);
     if (onClose) onClose();
   };
 
+  // --- Effects ---
   // Listen for photo updates from Settings
   useEffect(() => {
     const handleUpdate = () => {
@@ -37,12 +44,14 @@ export default function Sidebar({ onClose }) {
     return () => window.removeEventListener("profilePhotoUpdated", handleUpdate);
   }, []);
 
+  // --- Styles ---
   const bg = dark ? "#1a1a2e" : "#ffffff";
   const border = dark ? "#2d2d44" : "#f3f4f6";
   const activeBg = dark ? "#2d2d44" : "#f5f3ff";
   const activeColor = "#7c3aed";
   const textColor = dark ? "#94a3b8" : "#6b7280";
 
+  // --- Render ---
   return (
     <div style={{
       width: "100%", background: bg,
@@ -61,7 +70,7 @@ export default function Sidebar({ onClose }) {
         </div>
       </div>
 
-      {/* Nav */}
+      {/* Nav Items */}
       <nav style={{ flex: 1, padding: "16px 12px", overflowY: "auto" }}>
         {navItems.map(({ icon, label, path }) => {
           const active = location.pathname === path;
@@ -90,7 +99,7 @@ export default function Sidebar({ onClose }) {
         })}
       </nav>
 
-      {/* User */}
+      {/* User Profile & Sign Out */}
       <div style={{ padding: "16px 20px", borderTop: `1px solid ${border}`, position: "relative" }}>
         {/* Sign Out Popup */}
         {showMenu && (

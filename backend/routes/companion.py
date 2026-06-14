@@ -1,3 +1,7 @@
+"""
+companion.py — AI companion chat route with auto-detection and logging of health/money data.
+"""
+
 from fastapi import APIRouter
 from pydantic import BaseModel
 import boto3
@@ -19,6 +23,8 @@ from services.dynamodb import (
 
 router = APIRouter()
 
+# --- Constants ---
+
 BEDROCK_MODEL_ID  = "amazon.nova-lite-v1:0"
 FALLBACK_MODEL_ID = "amazon.nova-micro-v1:0"
 
@@ -28,12 +34,17 @@ bedrock = boto3.client(
 )
 
 
+# --- Request Models ---
+
 class ChatRequest(BaseModel):
+    """Schema for incoming chat messages."""
     user_id: str
     message: str
     history: list = []
     friend_name: str = "Nova"
 
+
+# --- Helper Functions ---
 
 def detect_and_log(user_id: str, message: str) -> str:
     """
@@ -87,8 +98,8 @@ Examples:
 
     try:
         clean = raw.strip().replace("```json", "").replace("```", "").strip()
-        print("DETECTION RAW:", raw)        # ← add this
-        print("DETECTION CLEAN:", clean)    # ← add this
+        print("DETECTION RAW:", raw)
+        print("DETECTION CLEAN:", clean)
         parsed = json.loads(clean)
     except Exception as e:
         print("Detection parse error:", e, "Raw:", raw)
@@ -96,6 +107,7 @@ Examples:
 
     logged = []
 
+    # Log expense if detected
     if parsed.get("expense", {}).get("found"):
         exp = parsed["expense"]
         amount = exp.get("amount")
@@ -105,6 +117,7 @@ Examples:
             add_transaction(user_id, float(amount), category, description)
             logged.append(f"💸 Logged expense: {amount} on {category}")
 
+    # Log health data if detected
     if parsed.get("health", {}).get("found"):
         h = parsed["health"]
         add_health_log(
@@ -120,6 +133,7 @@ Examples:
         if h.get("sleep_hours"): parts.append(f"{h['sleep_hours']}h sleep")
         logged.append(f"🏃 Logged health: {', '.join(parts)}")
 
+    # Update goal progress if detected
     if parsed.get("goal", {}).get("found"):
         g = parsed["goal"]
         goals = get_goals(user_id)
@@ -132,8 +146,11 @@ Examples:
     return "\n".join(logged)
 
 
+# --- Routes ---
+
 @router.post("/chat")
 def chat(req: ChatRequest):
+    """Handle a chat message: fetch context, auto-log data, and generate AI reply."""
     try:
         # Fetch fresh user data
         journals     = get_journal_entries(req.user_id)[:5]
@@ -183,6 +200,7 @@ GOALS:
         # Add logged confirmation to system prompt if something was saved
         log_note = f"\n\nYou just automatically logged this from the user's message:\n{logged_summary}" if logged_summary else ""
 
+        # Try Nova Lite → Nova Micro → Gemini fallback chain
         try:
             response = bedrock.converse(
                 modelId=BEDROCK_MODEL_ID,

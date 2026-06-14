@@ -1,7 +1,11 @@
+// Reports.jsx — Monthly overview of finances, health, and AI-generated insights
+
+// --- Imports ---
 import { useTheme } from "../components/ThemeContext";
 import DashboardLayout from "../components/DashboardLayout";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, RadarChart, Radar, PolarGrid, PolarAngleAxis } from "recharts";
 
+// --- Constants ---
 const monthlyData = [
   { month: "Jan", spent: 4200, saved: 800 },
   { month: "Feb", spent: 3800, saved: 1200 },
@@ -19,9 +23,11 @@ const radarData = [
   { subject: "Social", A: 75 },
 ];
 
+// --- Component ---
 export default function Reports() {
   const { dark } = useTheme();
 
+  // --- Styles ---
   const card = {
     background: dark ? "#1a1a2e" : "#ffffff",
     borderRadius: "16px", padding: "24px",
@@ -30,8 +36,10 @@ export default function Reports() {
   const text = dark ? "#f1f5f9" : "#1f2937";
   const muted = dark ? "#94a3b8" : "#6b7280";
 
+  // --- Render ---
   return (
     <DashboardLayout>
+      {/* Page Header */}
       <div style={{ marginBottom: "24px" }}>
         <h2 style={{ margin: "0 0 4px", fontSize: "26px", fontWeight: "700", color: text, display: "flex", alignItems: "center", gap: "10px" }}>
           <img src="/reports.png" alt="reports" style={{ width: "32px", height: "32px", objectFit: "contain" }} />
@@ -59,7 +67,9 @@ export default function Reports() {
         ))}
       </div>
 
+      {/* Charts Row — Spending vs Saving & Wellness Radar */}
       <div className="responsive-grid-2-1" style={{ marginBottom: "20px" }}>
+        {/* Bar Chart */}
         <div style={card}>
           <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>Spending vs Saving Trend</h3>
           <ResponsiveContainer width="100%" height={200}>
@@ -73,6 +83,7 @@ export default function Reports() {
           </ResponsiveContainer>
         </div>
 
+        {/* Radar Chart */}
         <div style={card}>
           <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>Wellness Score</h3>
           <ResponsiveContainer width="100%" height={200}>
@@ -85,6 +96,7 @@ export default function Reports() {
         </div>
       </div>
 
+      {/* AI Monthly Insights */}
       <div style={card}>
         <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>🤖 AI Monthly Insights</h3>
         <div className="responsive-grid-3" style={{}}>

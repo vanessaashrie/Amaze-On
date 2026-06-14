@@ -1,9 +1,13 @@
+// AICompanion.jsx — Chat interface with the AI best friend, including quick actions and mood selector
+
+// --- Imports ---
 import { useState, useRef, useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { useTheme } from "../components/ThemeContext";
 import DashboardLayout from "../components/DashboardLayout";
 import { useResponsive } from "../hooks/useMediaQuery";
 
+// --- Constants ---
 const suggestions = [
   "How can I save more money?",
   "I'm feeling stressed today",
@@ -20,14 +24,16 @@ const quickActions = [
 
 const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
+// --- Component ---
 export default function AICompanion() {
   const { dark } = useTheme();
   const { user: clerkUser } = useUser();
   const { isMobile, isTablet } = useResponsive();
 
   const localUser = JSON.parse(localStorage.getItem("pocketBuddyUser") || "{}");
-  const [friendName, setFriendName] = useState(localUser.friend_name || localUser.friendName || "Nova");
 
+  // --- State ---
+  const [friendName, setFriendName] = useState(localUser.friend_name || localUser.friendName || "Nova");
   const [messages, setMessages] = useState([
     { from: "ai", text: `Hey! I'm ${localUser.friend_name || localUser.friendName || "Nova"}, your AI best friend 💜 How are you feeling today? I'm here to help with your finances, health, or just to chat!` }
   ]);
@@ -35,6 +41,8 @@ export default function AICompanion() {
   const [loading, setLoading] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
   const bottomRef = useRef(null);
+
+  // --- Effects ---
 
   // Fetch friend name from backend using Clerk user ID
   useEffect(() => {
@@ -63,10 +71,14 @@ export default function AICompanion() {
     fetchProfile();
   }, [clerkUser]);
 
+  // Auto-scroll to latest message
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // --- Handlers ---
+
+  // Send a chat message to the AI companion backend
   const sendMessage = async (text) => {
     const msg = text || input.trim();
     if (!msg) return;
@@ -98,6 +110,7 @@ export default function AICompanion() {
     setLoading(false);
   };
 
+  // --- Styles ---
   const text = dark ? "#f1f5f9" : "#1f2937";
   const muted = dark ? "#94a3b8" : "#6b7280";
   const card = {
@@ -107,8 +120,10 @@ export default function AICompanion() {
     border: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`,
   };
 
+  // --- Render ---
   return (
     <DashboardLayout>
+      {/* Page Header */}
       <div style={{ marginBottom: "20px" }}>
         <h2 style={{ margin: "0 0 4px", fontSize: "26px", fontWeight: "700", color: text, display: "flex", alignItems: "center", gap: "8px" }}>
           <img src="/star.png" alt="stars" style={{ width: "28px", height: "28px", objectFit: "contain" }} />
@@ -125,7 +140,7 @@ export default function AICompanion() {
         {/* Chat Area */}
         <div style={{ ...card, display: "flex", overflow: "hidden", minHeight: isMobile ? "400px" : undefined }}>
 
-          {/* LEFT MASCOT PANEL — desktop only */}
+          {/* Left Mascot Panel — desktop only */}
           {!isMobile && !isTablet && (
             <div style={{ width: "200px", flexShrink: 0, borderRight: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px 16px", background: dark ? "#12122a" : "#faf5ff", gap: "12px" }}>
               <img src="/ChatGPT Image Jun 13, 2026, 10_27_03 PM.png" alt={friendName} style={{ width: "130px", height: "130px", objectFit: "contain", borderRadius: "50%", background: dark ? "#1a1a2e" : "#ede9fe", padding: "8px" }} />
@@ -137,7 +152,7 @@ export default function AICompanion() {
             </div>
           )}
 
-          {/* CHAT COLUMN */}
+          {/* Chat Column */}
           <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
             {/* Messages */}
             <div style={{ flex: 1, overflowY: "auto", padding: "20px", display: "flex", flexDirection: "column", gap: "12px" }}>
@@ -167,7 +182,8 @@ export default function AICompanion() {
               )}
               <div ref={bottomRef} />
             </div>
-            {/* Input */}
+
+            {/* Input Bar */}
             <div style={{ padding: "16px 20px", borderTop: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`, display: "flex", gap: "10px", flexShrink: 0 }}>
               <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && sendMessage()} placeholder="Type your message..." style={{ flex: 1, padding: "12px 16px", borderRadius: "12px", border: `1.5px solid ${dark ? "#2d2d44" : "#e5e7eb"}`, background: dark ? "#0f0f1a" : "#f9fafb", color: text, fontSize: "14px", outline: "none" }} />
               <button onClick={() => sendMessage()} style={{ padding: "12px 20px", borderRadius: "12px", border: "none", background: "#7c3aed", color: "white", fontSize: "14px", fontWeight: "600", cursor: "pointer" }}>Send</button>
@@ -175,17 +191,20 @@ export default function AICompanion() {
           </div>
         </div>
 
-        {/* Right Panel — on desktop: column beside chat. On small screens: row below chat */}
+        {/* Right Panel — Quick Questions & Mood Check */}
         <div style={isMobile || isTablet
           ? { display: "flex", gap: "20px", flexWrap: "wrap" }
           : { display: "flex", flexDirection: "column", gap: "20px" }
         }>
+          {/* Quick Questions */}
           <div style={{ ...card, padding: "16px", flex: 1, minWidth: "200px" }}>
             <p style={{ margin: "0 0 12px", fontSize: "15px", fontWeight: "600", color: text }}>Quick Questions</p>
             {suggestions.map(s => (
               <button key={s} onClick={() => sendMessage(s)} style={{ width: "100%", marginBottom: "8px", padding: "10px 12px", borderRadius: "10px", border: `1px solid ${dark ? "#2d2d44" : "#e9d5ff"}`, background: dark ? "#0f0f1a" : "#faf5ff", color: dark ? "#a78bfa" : "#7c3aed", fontSize: "14px", cursor: "pointer", textAlign: "left", fontWeight: "500" }}>{s}</button>
             ))}
           </div>
+
+          {/* Mood Check */}
           <div style={{ ...card, padding: "16px", flex: 1, minWidth: "200px" }}>
             <p style={{ margin: "0 0 12px", fontSize: "15px", fontWeight: "600", color: text }}>How's your day?</p>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>

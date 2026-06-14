@@ -1,3 +1,6 @@
+// Health.jsx — Health tracker with sleep, steps, water, habits, and cycle tracking for female users
+
+// --- Imports ---
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { useTheme } from "../components/ThemeContext";
@@ -5,6 +8,7 @@ import DashboardLayout from "../components/DashboardLayout";
 import api from "../api";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 
+// --- Constants ---
 const DEFAULT_HABITS = {
   morning_walk: false,
   meditate: false,
@@ -23,34 +27,37 @@ const HABIT_LABELS = {
 
 const SYMPTOMS = ["cramps", "bloating", "headache", "fatigue", "mood swings", "acne"];
 
+// --- Component ---
 export default function Health() {
   const { dark } = useTheme();
   const { user } = useUser();
 
-  const [todayLog, setTodayLog]   = useState(null);
-  const [weekLogs, setWeekLogs]   = useState([]);
+  // --- State ---
+  const [todayLog, setTodayLog] = useState(null);
+  const [weekLogs, setWeekLogs] = useState([]);
   const [waterCount, setWaterCount] = useState(0);
-  const [habits, setHabits]       = useState(DEFAULT_HABITS);
-  const [saving, setSaving]       = useState(false);
+  const [habits, setHabits] = useState(DEFAULT_HABITS);
+  const [saving, setSaving] = useState(false);
 
   // Cycle tracker state
-  const [userProfile, setUserProfile]       = useState(null);
-  const [cycleHistory, setCycleHistory]     = useState([]);
+  const [userProfile, setUserProfile] = useState(null);
+  const [cycleHistory, setCycleHistory] = useState([]);
   const [cyclePrediction, setCyclePrediction] = useState(null);
-  const [cycleForm, setCycleForm]           = useState({
+  const [cycleForm, setCycleForm] = useState({
     start_date: "", end_date: "", flow: "medium", symptoms: [],
   });
-  const [cycleLogging, setCycleLogging]     = useState(false);
-  const [showCycleForm, setShowCycleForm]   = useState(false);
+  const [cycleLogging, setCycleLogging] = useState(false);
+  const [showCycleForm, setShowCycleForm] = useState(false);
 
   const waterGoal = 8;
 
+  // --- Styles ---
   const card = {
     background: dark ? "#1a1a2e" : "#ffffff",
     borderRadius: "16px", padding: "24px",
     border: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`,
   };
-  const text  = dark ? "#f1f5f9" : "#1f2937";
+  const text = dark ? "#f1f5f9" : "#1f2937";
   const muted = dark ? "#94a3b8" : "#6b7280";
   const inputStyle = {
     padding: "10px 14px", borderRadius: "10px",
@@ -60,7 +67,9 @@ export default function Health() {
     width: "100%", boxSizing: "border-box",
   };
 
-  // ── Fetch health logs ──────────────────────────────────────────────
+  // --- Effects ---
+
+  // Fetch today's health log and weekly logs
   useEffect(() => {
     if (!user?.id) return;
 
@@ -80,7 +89,7 @@ export default function Health() {
       .catch((err) => console.error("Failed to fetch week logs:", err));
   }, [user?.id]);
 
-  // ── Fetch profile (for gender check) + cycle data ─────────────────
+  // Fetch profile (for gender check) and cycle data
   useEffect(() => {
     if (!user?.id) return;
 
@@ -100,7 +109,9 @@ export default function Health() {
       .catch((err) => console.error("Failed to fetch profile:", err));
   }, [user?.id]);
 
-  // ── Health log helpers ────────────────────────────────────────────
+  // --- Handlers ---
+
+  // Save health log to backend
   const saveLog = async (overrides = {}) => {
     setSaving(true);
     try {
@@ -123,18 +134,20 @@ export default function Health() {
     }
   };
 
+  // Update water count and persist
   const handleWater = (count) => {
     setWaterCount(count);
     saveLog({ water_glasses: count.toString() });
   };
 
+  // Toggle a habit and persist
   const handleHabit = (key) => {
     const updated = { ...habits, [key]: !habits[key] };
     setHabits(updated);
     saveLog({ habits: updated });
   };
 
-  // ── Cycle helpers ─────────────────────────────────────────────────
+  // Toggle a cycle symptom in the form
   const toggleSymptom = (s) => {
     setCycleForm((prev) => ({
       ...prev,
@@ -144,6 +157,7 @@ export default function Health() {
     }));
   };
 
+  // Log a new period entry
   const handleLogPeriod = async () => {
     if (!cycleForm.start_date) return;
     setCycleLogging(true);
@@ -168,7 +182,7 @@ export default function Health() {
     }
   };
 
-  // ── Chart data ────────────────────────────────────────────────────
+  // --- Derived Data ---
   const sleepData = weekLogs.map((l) => ({
     day: new Date(l.date).toLocaleDateString("en-IN", { weekday: "short" }),
     hours: parseFloat(l.sleep_hours) || 0,
@@ -181,8 +195,10 @@ export default function Health() {
 
   const isFemale = userProfile?.gender?.toLowerCase() === "female";
 
+  // --- Render ---
   return (
     <DashboardLayout>
+      {/* Page Header */}
       <div style={{ marginBottom: "24px" }}>
         <h2 style={{ margin: "0 0 4px", fontSize: "26px", fontWeight: "700", color: text }}>❤️ Health Tracker</h2>
         <p style={{ margin: 0, fontSize: "15px", color: muted }}>Monitor your sleep, hydration, steps and wellness.</p>
@@ -207,7 +223,9 @@ export default function Health() {
         ))}
       </div>
 
+      {/* Charts Row — Sleep & Steps */}
       <div className="responsive-grid-2" style={{ marginBottom: "20px" }}>
+        {/* Sleep Chart */}
         <div style={card}>
           <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>Sleep This Week</h3>
           {sleepData.length === 0 ? (
@@ -224,6 +242,7 @@ export default function Health() {
           )}
         </div>
 
+        {/* Steps Chart */}
         <div style={card}>
           <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>Daily Steps</h3>
           {stepsData.length === 0 ? (
@@ -241,6 +260,7 @@ export default function Health() {
         </div>
       </div>
 
+      {/* Water & Habits Row */}
       <div className="responsive-grid-2" style={{ marginBottom: "20px" }}>
         {/* Water Tracker */}
         <div style={card}>
@@ -256,7 +276,7 @@ export default function Health() {
           {saving && <p style={{ fontSize: "13px", color: muted, marginTop: "8px" }}>Saving...</p>}
         </div>
 
-        {/* Habits */}
+        {/* Daily Habits */}
         <div style={card}>
           <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>Today's Habits</h3>
           {Object.entries(HABIT_LABELS).map(([key, { label, icon }]) => (
@@ -271,11 +291,11 @@ export default function Health() {
         </div>
       </div>
 
-      {/* ── CYCLE TRACKER (females only) ─────────────────────────────── */}
+      {/* Cycle Tracker — females only */}
       {isFemale && (
         <div style={{ marginTop: "8px" }}>
 
-          {/* Section header */}
+          {/* Section Header */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
             <div>
               <h3 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700", color: "#ec4899" }}>🌸 Cycle Tracker</h3>
@@ -300,7 +320,7 @@ export default function Health() {
             </div>
           )}
 
-          {/* Prediction cards */}
+          {/* Prediction Cards */}
           {cyclePrediction && (
             <div className="responsive-grid-4" style={{ marginBottom: "20px" }}>
               {[
@@ -370,6 +390,7 @@ export default function Health() {
                 </div>
               </div>
 
+              {/* Symptoms Selector */}
               <label style={{ fontSize: "13px", color: muted, display: "block", marginBottom: "10px", fontWeight: "600" }}>Symptoms</label>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "16px" }}>
                 {SYMPTOMS.map((s) => {
@@ -389,6 +410,7 @@ export default function Health() {
                 })}
               </div>
 
+              {/* Form Actions */}
               <div style={{ display: "flex", gap: "10px" }}>
                 <button
                   onClick={handleLogPeriod}

@@ -1,9 +1,13 @@
+// Journal.jsx — Daily mood tracking and journal entry page
+
+// --- Imports ---
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { useTheme } from "../components/ThemeContext";
 import DashboardLayout from "../components/DashboardLayout";
 import api from "../api";
 
+// --- Constants ---
 const moods = [
   { emoji: "😁", label: "Great", color: "#10b981" },
   { emoji: "🙂", label: "Good", color: "#3b82f6" },
@@ -12,16 +16,19 @@ const moods = [
   { emoji: "😣", label: "Terrible", color: "#ef4444" },
 ];
 
+// --- Component ---
 export default function Journal() {
   const { dark } = useTheme();
   const { user } = useUser();
 
+  // --- State ---
   const [selectedMood, setSelectedMood] = useState(null);
   const [entry, setEntry] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [pastEntries, setPastEntries] = useState([]);
 
+  // --- Styles ---
   const card = {
     background: dark ? "#1a1a2e" : "#ffffff",
     borderRadius: "16px",
@@ -33,6 +40,8 @@ export default function Journal() {
   const muted = dark ? "#94a3b8" : "#6b7280";
   const inputBg = dark ? "#0f0f1a" : "#f9fafb";
 
+  // --- Effects ---
+  // Fetch past journal entries on mount
   useEffect(() => {
     if (!user?.id) return;
     api.get(`/journal/${user.id}`)
@@ -40,6 +49,8 @@ export default function Journal() {
       .catch((err) => console.error("Failed to fetch journal entries:", err));
   }, [user?.id]);
 
+  // --- Handlers ---
+  // Submit a new journal entry
   const handleSubmit = async () => {
     if (!selectedMood || !entry.trim()) return;
 
@@ -68,8 +79,10 @@ export default function Journal() {
     }
   };
 
+  // --- Render ---
   return (
     <DashboardLayout>
+      {/* Page Header */}
       <div style={{ marginBottom: "24px" }}>
         <h2 style={{ margin: "0 0 4px", fontSize: "26px", fontWeight: "700", color: text, display: "flex", alignItems: "center", gap: "10px" }}>
           <img src="/journal.png" alt="journal" style={{ width: "32px", height: "32px", objectFit: "contain" }} />
@@ -82,9 +95,10 @@ export default function Journal() {
 
       <div className="responsive-grid-2-1">
 
-        {/* LEFT SIDE */}
+        {/* Left Column — Mood Picker & Text Entry */}
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
 
+          {/* Mood Selector */}
           <div style={card}>
             <h3 style={{ marginBottom: "14px", fontSize: "18px", color: text }}>
               How are you feeling today?
@@ -111,6 +125,7 @@ export default function Journal() {
             </div>
           </div>
 
+          {/* Journal Text Area */}
           <div style={card}>
             <h3 style={{ marginBottom: "10px", fontSize: "18px", color: text }}>
               Write your thoughts
@@ -152,14 +167,16 @@ export default function Journal() {
 
         </div>
 
-        {/* RIGHT SIDE */}
+        {/* Right Column — Streak & Past Entries */}
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
 
+          {/* Streak Counter */}
           <div style={card}>
             <h3 style={{ color: text }}>🔥 Streak</h3>
             <h1 style={{ color: "#7c3aed" }}>{pastEntries.length} entries</h1>
           </div>
 
+          {/* Past Entries List */}
           <div style={card}>
             <h3 style={{ color: text }}>Past Entries</h3>
             {pastEntries.length === 0 && (

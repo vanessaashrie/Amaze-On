@@ -1,3 +1,6 @@
+// Money.jsx — Income and expense tracker with pie chart breakdown and transaction history
+
+// --- Imports ---
 import { useState, useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { useTheme } from "../components/ThemeContext";
@@ -6,6 +9,7 @@ import { useResponsive } from "../hooks/useMediaQuery";
 import api from "../api";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, LineChart, Line, XAxis, YAxis } from "recharts";
 
+// --- Constants ---
 const CATEGORY_COLORS = {
   Food: "#f97316",
   Transport: "#3b82f6",
@@ -15,10 +19,12 @@ const CATEGORY_COLORS = {
   Others: "#6b7280",
 };
 
+// --- Component ---
 export default function Money() {
   const { dark } = useTheme();
   const { user } = useUser();
 
+  // --- State ---
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name: "", amount: "", category: "Food", type: "expense" });
   const [transactions, setTransactions] = useState([]);
@@ -26,6 +32,7 @@ export default function Money() {
 
   const { isMobile } = useResponsive();
 
+  // --- Styles ---
   const card = {
     background: dark ? "#1a1a2e" : "#ffffff",
     borderRadius: "16px",
@@ -42,6 +49,8 @@ export default function Money() {
     color: text, fontSize: "14px", outline: "none", boxSizing: "border-box",
   };
 
+  // --- Effects ---
+  // Fetch transactions on mount
   useEffect(() => {
     if (!user?.id) return;
     api.get(`/money/${user.id}`)
@@ -49,6 +58,7 @@ export default function Money() {
       .catch((err) => console.error("Failed to fetch transactions:", err));
   }, [user?.id]);
 
+  // --- Derived Data ---
   const totalSpent = transactions
     .filter((t) => t.type === "expense")
     .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
@@ -66,6 +76,8 @@ export default function Money() {
       }, {})
   ).map(([name, value]) => ({ name, value, color: CATEGORY_COLORS[name] || "#6b7280" }));
 
+  // --- Handlers ---
+  // Save a new transaction
   const handleSave = async () => {
     if (!form.name || !form.amount) return;
     setLoading(true);
@@ -91,8 +103,10 @@ export default function Money() {
     }
   };
 
+  // --- Render ---
   return (
     <DashboardLayout>
+      {/* Page Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
         <div>
           <h2 style={{ margin: "0 0 4px", fontSize: "26px", fontWeight: "700", color: text, display: "flex", alignItems: "center", gap: "10px" }}>
@@ -107,6 +121,7 @@ export default function Money() {
         }}>+ Add Transaction</button>
       </div>
 
+      {/* New Transaction Form */}
       {showForm && (
         <div style={{ ...card, marginBottom: "20px" }}>
           <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>New Transaction</h3>
@@ -140,6 +155,7 @@ export default function Money() {
         </div>
       )}
 
+      {/* Summary Stat Cards */}
       <div className="responsive-grid-4" style={{ marginBottom: "20px" }}>
         {[
           { label: "Total Spent", value: `₹${totalSpent.toLocaleString("en-IN")}`, icon: "📤", color: "#ef4444" },
@@ -157,7 +173,9 @@ export default function Money() {
         ))}
       </div>
 
+      {/* Charts Row — Spending Breakdown & Recent Activity */}
       <div className="responsive-grid-2" style={{ marginBottom: "20px" }}>
+        {/* Pie Chart */}
         <div style={card}>
           <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>Spending Breakdown</h3>
           {pieData.length === 0 ? (
@@ -187,6 +205,7 @@ export default function Money() {
           )}
         </div>
 
+        {/* Recent Activity */}
         <div style={card}>
           <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>Recent Activity</h3>
           {transactions.slice(0, 5).map((t) => (
@@ -206,6 +225,7 @@ export default function Money() {
         </div>
       </div>
 
+      {/* All Transactions List */}
       <div style={card}>
         <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>All Transactions</h3>
         {transactions.length === 0 && (

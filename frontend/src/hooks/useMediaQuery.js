@@ -1,5 +1,10 @@
+// useMediaQuery.js — Custom hooks for responsive breakpoint detection
+
+// --- Imports ---
 import { useState, useEffect } from "react";
 
+// --- useMediaQuery Hook ---
+// Returns whether the given CSS media query currently matches
 export function useMediaQuery(query) {
     const [matches, setMatches] = useState(() => window.matchMedia(query).matches);
 
@@ -13,6 +18,8 @@ export function useMediaQuery(query) {
     return matches;
 }
 
+// --- useResponsive Hook ---
+// Returns { isMobile, isTablet, isDesktop } booleans based on viewport width
 export function useResponsive() {
     const isMobile = useMediaQuery("(max-width: 640px)");
     const isTablet = useMediaQuery("(min-width: 641px) and (max-width: 1024px)");

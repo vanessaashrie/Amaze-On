@@ -1,19 +1,33 @@
+// Settings.jsx — User settings for profile, budget, appearance, and notifications
+
+// --- Imports ---
 import { useState, useRef } from "react";
 import { useTheme } from "../components/ThemeContext";
 import DashboardLayout from "../components/DashboardLayout";
 import { useUser } from "@clerk/clerk-react";
 
+// --- Component ---
 export default function Settings() {
   const { dark, toggle } = useTheme();
   const { user } = useUser();
   const savedUser = JSON.parse(localStorage.getItem("pocketBuddyUser") || "{}");
 
+  // --- State ---
   const [notifications, setNotifications] = useState({ daily: true, budget: true, health: false, journal: true });
-  const [budget, setBudget] = useState("10000");
+  const [budget, setBudget] = useState(localStorage.getItem("pocketBuddyBudget") || "10000");
   const [uploading, setUploading] = useState(false);
   const [profilePhoto, setProfilePhoto] = useState(localStorage.getItem("pocketBuddyProfilePhoto") || "");
   const fileInputRef = useRef(null);
 
+  // --- Handlers ---
+
+  // Save monthly budget to localStorage
+  const saveBudget = () => {
+    localStorage.setItem("pocketBuddyBudget", budget);
+    alert("Budget saved! ₹" + Number(budget).toLocaleString("en-IN"));
+  };
+
+  // Upload profile photo via Clerk and/or localStorage fallback
   const handlePhotoUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -38,6 +52,7 @@ export default function Settings() {
     reader.readAsDataURL(file);
   };
 
+  // --- Styles ---
   const card = {
     background: dark ? "#1a1a2e" : "#ffffff",
     borderRadius: "16px", padding: "24px",
@@ -53,6 +68,8 @@ export default function Settings() {
     color: text, fontSize: "15px", outline: "none"
   };
 
+  // --- Sub-components ---
+  // Toggle switch for settings options
   const Toggle = ({ on, onToggle }) => (
     <div onClick={onToggle} style={{
       width: "44px", height: "24px", borderRadius: "12px",
@@ -67,8 +84,10 @@ export default function Settings() {
     </div>
   );
 
+  // --- Render ---
   return (
     <DashboardLayout>
+      {/* Page Header */}
       <div style={{ marginBottom: "24px" }}>
         <h2 style={{ margin: "0 0 4px", fontSize: "26px", fontWeight: "700", color: text, display: "flex", alignItems: "center", gap: "10px" }}>
           <img src="/settings.png" alt="settings" style={{ width: "28px", height: "28px", objectFit: "contain" }} />
@@ -79,7 +98,7 @@ export default function Settings() {
 
       <div className="responsive-grid-2">
         <div>
-          {/* Profile */}
+          {/* Profile Card */}
           <div style={card}>
             <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>👤 Profile</h3>
             <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "20px" }}>
@@ -124,19 +143,19 @@ export default function Settings() {
             </div>
           </div>
 
-          {/* Budget */}
+          {/* Budget Card */}
           <div style={card}>
             <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>💰 Budget Settings</h3>
             <label style={{ fontSize: "14px", color: muted, display: "block", marginBottom: "8px" }}>Monthly Budget (₹)</label>
             <div style={{ display: "flex", gap: "10px" }}>
               <input value={budget} onChange={e => setBudget(e.target.value)} style={{ ...inputStyle, flex: 1 }} />
-              <button style={{ padding: "10px 20px", borderRadius: "10px", border: "none", background: "#7c3aed", color: "white", fontSize: "14px", fontWeight: "600", cursor: "pointer" }}>Save</button>
+              <button onClick={saveBudget} style={{ padding: "10px 20px", borderRadius: "10px", border: "none", background: "#7c3aed", color: "white", fontSize: "14px", fontWeight: "600", cursor: "pointer" }}>Save</button>
             </div>
           </div>
         </div>
 
         <div>
-          {/* Appearance */}
+          {/* Appearance Card */}
           <div style={card}>
             <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>🎨 Appearance</h3>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -148,7 +167,7 @@ export default function Settings() {
             </div>
           </div>
 
-          {/* Notifications */}
+          {/* Notifications Card */}
           <div style={card}>
             <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>🔔 Notifications</h3>
             {[
