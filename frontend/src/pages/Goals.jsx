@@ -20,7 +20,6 @@ export default function Goals() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ title: "", category: "Finance", due_date: "", target: "" });
   const [loading, setLoading] = useState(false);
-  const [updateInputs, setUpdateInputs] = useState({});
 
   const card = {
     background: dark ? "#1a1a2e" : "#ffffff",
@@ -71,21 +70,17 @@ export default function Goals() {
     }
   };
 
-  const updateGoal = async (goal) => {
-    const newCurrent = updateInputs[goal.goal_id] ?? goal.current;
-    const isCompleted = parseFloat(newCurrent) >= parseFloat(goal.target);
+  const toggleDone = async (goal) => {
     try {
       await api.post("/goals/update", {
         clerk_id: user.id,
         goal_id: goal.goal_id,
-        current: newCurrent.toString(),
-        is_completed: isCompleted,
+        current: goal.is_completed ? "0" : goal.target,
+        is_completed: !goal.is_completed,
       });
       await refreshGoals();
-      setUpdateInputs((prev) => ({ ...prev, [goal.goal_id]: undefined }));
     } catch (err) {
-      console.error("Failed to update goal:", err);
-      alert("Failed to update goal");
+      console.error("Failed to toggle goal:", err);
     }
   };
 
@@ -147,40 +142,54 @@ export default function Goals() {
           const color = CATEGORY_COLORS[goal.category] || "#7c3aed";
           const progress = Math.min(100, Math.round((parseFloat(goal.current) / parseFloat(goal.target)) * 100)) || 0;
           return (
-            <div key={goal.goal_id} style={card}>
-              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "16px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                  <div style={{ width: "44px", height: "44px", borderRadius: "12px", background: color + "20", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <img src="/goals.png" alt="goal" style={{ width: "26px", height: "26px", objectFit: "contain" }} />
+            <div key={goal.goal_id} style={{ ...card, display: "flex", gap: "16px", alignItems: "flex-start" }}>
+
+              {/* Done/Not Done button on left */}
+              <button
+                onClick={() => toggleDone(goal)}
+                style={{
+                  width: "36px", height: "36px", borderRadius: "50%", flexShrink: 0,
+                  border: `2px solid ${color}`,
+                  background: goal.is_completed ? color : "transparent",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  cursor: "pointer", fontSize: "14px", color: goal.is_completed ? "white" : color,
+                  marginTop: "4px"
+                }}
+              >
+                {goal.is_completed ? "✓" : ""}
+              </button>
+
+              {/* Goal content */}
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "12px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                    <div style={{ width: "44px", height: "44px", borderRadius: "12px", background: color + "20", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <img src="/goals.png" alt="goal" style={{ width: "26px", height: "26px", objectFit: "contain" }} />
+                    </div>
+                    <div>
+                      <p style={{ margin: "0 0 2px", fontSize: "15px", fontWeight: "600", color: text }}>{goal.title}</p>
+                      <p style={{ margin: 0, fontSize: "13px", color: muted }}>{goal.category} · Due {goal.due_date || "—"}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p style={{ margin: "0 0 2px", fontSize: "15px", fontWeight: "600", color: text }}>{goal.title}</p>
-                    <p style={{ margin: 0, fontSize: "13px", color: muted }}>{goal.category} · Due {goal.due_date || "—"}</p>
-                  </div>
+                  <span style={{ fontSize: "18px", fontWeight: "700", color }}>{progress}%</span>
                 </div>
-                <span style={{ fontSize: "18px", fontWeight: "700", color }}>{progress}%</span>
-              </div>
 
-              <div style={{ height: "8px", borderRadius: "99px", background: dark ? "#2d2d44" : "#f3f4f6", marginBottom: "10px" }}>
-                <div style={{ height: "100%", width: `${progress}%`, borderRadius: "99px", background: color, transition: "width 0.5s" }} />
-              </div>
+                <div style={{ height: "8px", borderRadius: "99px", background: dark ? "#2d2d44" : "#f3f4f6", marginBottom: "10px" }}>
+                  <div style={{ height: "100%", width: `${progress}%`, borderRadius: "99px", background: color, transition: "width 0.5s" }} />
+                </div>
 
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "8px" }}>
-                <p style={{ margin: 0, fontSize: "13px", color: muted }}>{goal.current} / {goal.target}</p>
-                <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                  <input
-                    type="number"
-                    placeholder="Update"
-                    value={updateInputs[goal.goal_id] ?? ""}
-                    onChange={(e) => setUpdateInputs((prev) => ({ ...prev, [goal.goal_id]: e.target.value }))}
-                    style={{ ...inputStyle, width: "80px", padding: "6px 10px" }}
-                  />
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <p style={{ margin: 0, fontSize: "13px", color: muted }}>{goal.current} / {goal.target}</p>
                   <button
-                    onClick={() => updateGoal(goal)}
+                    onClick={() => toggleDone(goal)}
                     style={{
-                      padding: "6px 14px", borderRadius: "8px", border: `1px solid ${color}`,
-                      background: "transparent", color, fontSize: "13px", fontWeight: "500", cursor: "pointer",
-                    }}>Update</button>
+                      padding: "8px 16px", borderRadius: "10px", border: "none",
+                      background: "#7c3aed", color: "white",
+                      fontSize: "14px", fontWeight: "600", cursor: "pointer",
+                    }}
+                  >
+                    Mark Done
+                  </button>
                 </div>
               </div>
             </div>
