@@ -89,13 +89,13 @@ export default function SignUpPage() {
           background: "white",
           borderRadius: "24px",
           boxShadow: "0 20px 60px rgba(0,0,0,0.08)",
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
+          display: "flex",
+          flexWrap: "wrap",
           overflow: "hidden",
         }}>
 
-          {/* LEFT — mascot image */}
-          <div style={{ display: "flex" }}>
+          {/* LEFT — mascot image (hidden on mobile) */}
+          <div className="hide-on-mobile" style={{ display: "flex", flex: "1 1 340px", minWidth: "300px" }}>
             <img
               src="/mascot.png"
               alt="Pocket Buddy"
@@ -115,10 +115,11 @@ export default function SignUpPage() {
             justifyContent: "center",
             alignItems: "stretch",
             background: "white",
-            padding: "48px 56px",
-            borderLeft: "1px solid #f3f4f6",
+            padding: "48px 32px",
             boxSizing: "border-box",
             gap: "24px",
+            flex: "1 1 340px",
+            minWidth: "300px",
           }}>
 
             {/* Heading */}

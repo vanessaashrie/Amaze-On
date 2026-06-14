@@ -48,140 +48,138 @@ export default function LoginPage() {
       `}</style>
 
       <div style={{
-        minHeight:"100vh",
-        background:"#f0eeff",
-        display:"flex",
-        alignItems:"center",
-        justifyContent:"center",
-        padding:"16px",
-        boxSizing:"border-box"
+        minHeight: "100vh",
+        background: "#f0eeff",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "16px",
+        boxSizing: "border-box"
       }}>
         <div style={{
-          width:"100%",
-          maxWidth:"1100px",
-          background:"white",
-          borderRadius:"24px",
-          boxShadow:"0 20px 60px rgba(0,0,0,0.08)",
-          display:"grid",
-          gridTemplateColumns:"1fr 1fr",
-          height:"90vh",
-          maxHeight:"900px",
-          overflow:"hidden"
+          width: "100%",
+          maxWidth: "1100px",
+          background: "white",
+          borderRadius: "24px",
+          boxShadow: "0 20px 60px rgba(0,0,0,0.08)",
+          display: "flex",
+          flexWrap: "wrap",
+          minHeight: "90vh",
+          maxHeight: "900px",
+          overflow: "hidden"
         }}>
 
           {/* LEFT — Login form */}
           <div style={{
-            display:"flex",
-            flexDirection:"column",
-            justifyContent:"center",
-            alignItems:"center",
-            borderRight:"1px solid #f3f4f6",
-            overflow:"auto",
-            height:"100%",
-            boxSizing:"border-box",
-            background:"white",
-            padding:"40px 60px",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            overflow: "auto",
+            boxSizing: "border-box",
+            background: "white",
+            padding: "40px 32px",
+            flex: "1 1 340px",
+            minWidth: "300px",
           }}>
-            <div style={{width:"100%",maxWidth:"380px"}}>
+            <div style={{ width: "100%", maxWidth: "380px" }}>
 
-              {/* Heading — centered, one line subtitle */}
-              <div style={{textAlign:"center", marginBottom:"32px"}}>
+              {/* Heading — centered */}
+              <div style={{ textAlign: "center", marginBottom: "32px" }}>
                 <h2 style={{
-                  fontSize:"32px",
-                  fontWeight:"800",
-                  color:"#1f2937",
-                  margin:"0 0 10px",
-                  whiteSpace:"nowrap"
+                  fontSize: "28px",
+                  fontWeight: "800",
+                  color: "#1f2937",
+                  margin: "0 0 10px",
                 }}>
                   Welcome Back!
                 </h2>
                 <p style={{
-                  fontSize:"14px",
-                  color:"#6b7280",
-                  lineHeight:"1.6",
-                  margin:0,
-                  whiteSpace:"nowrap"
+                  fontSize: "14px",
+                  color: "#6b7280",
+                  lineHeight: "1.6",
+                  margin: 0,
                 }}>
                   Sign in to continue your journey with your AI best friend 💚
                 </p>
               </div>
 
               <SignedOut>
-                <div style={{width:"100%"}}>
+                <div style={{ width: "100%" }}>
                   <SignIn
                     routing="hash"
                     signUpUrl="/sign-up"
                     afterSignInUrl="/dashboard"
                     appearance={{
-                      variables:{
-                        colorPrimary:"#7c3aed",
-                        borderRadius:"10px",
-                        fontSize:"14px",
-                        colorBackground:"white",
-                        colorInputBackground:"white",
+                      variables: {
+                        colorPrimary: "#7c3aed",
+                        borderRadius: "10px",
+                        fontSize: "14px",
+                        colorBackground: "white",
+                        colorInputBackground: "white",
                       },
-                      elements:{
-                        rootBox:{width:"100%"},
-                        card:{
-                          boxShadow:"none",
-                          padding:"0",
-                          margin:"0",
-                          width:"100%",
-                          border:"none",
-                          background:"transparent",
+                      elements: {
+                        rootBox: { width: "100%" },
+                        card: {
+                          boxShadow: "none",
+                          padding: "0",
+                          margin: "0",
+                          width: "100%",
+                          border: "none",
+                          background: "transparent",
                         },
-                        cardBox:{
-                          boxShadow:"none",
-                          border:"none",
-                          background:"transparent",
+                        cardBox: {
+                          boxShadow: "none",
+                          border: "none",
+                          background: "transparent",
                         },
-                        headerTitle:{display:"none"},
-                        headerSubtitle:{display:"none"},
-                        header:{display:"none"},
-                        socialButtonsBlockButton:{
-                          border:"1.5px solid #e5e7eb",
-                          borderRadius:"10px",
-                          fontSize:"14px",
-                          background:"white",
-                          boxShadow:"none",
+                        headerTitle: { display: "none" },
+                        headerSubtitle: { display: "none" },
+                        header: { display: "none" },
+                        socialButtonsBlockButton: {
+                          border: "1.5px solid #e5e7eb",
+                          borderRadius: "10px",
+                          fontSize: "14px",
+                          background: "white",
+                          boxShadow: "none",
                         },
-                        formButtonPrimary:{
-                          background:"#7c3aed",
-                          borderRadius:"10px",
-                          fontSize:"14px",
-                          padding:"12px",
-                          boxShadow:"none",
+                        formButtonPrimary: {
+                          background: "#7c3aed",
+                          borderRadius: "10px",
+                          fontSize: "14px",
+                          padding: "12px",
+                          boxShadow: "none",
                         },
-                        footerActionLink:{color:"#7c3aed"},
-                        formFieldInput:{
-                          fontSize:"14px",
-                          border:"1.5px solid #e5e7eb",
-                          borderRadius:"10px",
-                          padding:"12px 14px",
-                          boxShadow:"none",
-                          outline:"none",
+                        footerActionLink: { color: "#7c3aed" },
+                        formFieldInput: {
+                          fontSize: "14px",
+                          border: "1.5px solid #e5e7eb",
+                          borderRadius: "10px",
+                          padding: "12px 14px",
+                          boxShadow: "none",
+                          outline: "none",
                         },
-                        formFieldLabel:{
-                          fontSize:"13px",
-                          color:"#374151",
+                        formFieldLabel: {
+                          fontSize: "13px",
+                          color: "#374151",
                         },
-                        dividerLine:{background:"#f3f4f6"},
-                        dividerText:{color:"#9ca3af",fontSize:"13px"},
-                        footer:{
-                          background:"transparent",
-                          border:"none",
-                          boxShadow:"none",
+                        dividerLine: { background: "#f3f4f6" },
+                        dividerText: { color: "#9ca3af", fontSize: "13px" },
+                        footer: {
+                          background: "transparent",
+                          border: "none",
+                          boxShadow: "none",
                         },
-                        footerPages:{
-                          background:"transparent",
-                          boxShadow:"none",
-                          border:"none",
+                        footerPages: {
+                          background: "transparent",
+                          boxShadow: "none",
+                          border: "none",
                         },
-                        main:{padding:"0"},
-                        form:{gap:"16px"},
-                        page:{background:"transparent"},
-                        navbar:{display:"none"},
-                        navbarButtons:{display:"none"},
+                        main: { padding: "0" },
+                        form: { gap: "16px" },
+                        page: { background: "transparent" },
+                        navbar: { display: "none" },
+                        navbarButtons: { display: "none" },
                       }
                     }}
                   />
@@ -192,23 +190,23 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* RIGHT — Full image */}
-          <div style={{overflow:"hidden",display:"flex",height:"100%"}}>
+          {/* RIGHT — Full image (hidden on small screens via CSS) */}
+          <div className="hide-on-mobile" style={{ overflow: "hidden", display: "flex", flex: "1 1 340px", minWidth: "300px", maxHeight: "900px" }}>
             <img
               src="/mascot.png"
               alt="Pocket Buddy"
               style={{
-                width:"100%",
-                height:"100%",
-                objectFit:"cover",
-                objectPosition:"center top",
-                display:"block",
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                objectPosition: "center top",
+                display: "block",
               }}
             />
           </div>
 
         </div>
-      </div>
+      </div >
     </>
   );
 }
