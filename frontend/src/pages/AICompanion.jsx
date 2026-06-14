@@ -120,191 +120,81 @@ export default function AICompanion() {
         <p style={{ margin: 0, fontSize: "15px", color: muted }}>Chat with {friendName}, your personal AI best friend.</p>
       </div>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", minHeight: "500px", height: isMobile ? "auto" : "calc(100vh - 220px)" }}>
+      <div style={isMobile || isTablet
+        ? { display: "flex", flexDirection: "column", gap: "20px" }
+        : { display: "grid", gridTemplateColumns: "1fr 280px", gap: "20px", height: "calc(100vh - 220px)" }
+      }>
 
         {/* Chat Area */}
-        <div style={{ ...card, display: "flex", overflow: "hidden", flex: "1 1 600px" }}>
+        <div style={{ ...card, display: "flex", overflow: "hidden", minHeight: isMobile ? "400px" : undefined }}>
 
-          {/* LEFT MASCOT PANEL */}
+          {/* LEFT MASCOT PANEL — desktop only */}
           {!isMobile && !isTablet && (
-            <div style={{
-              width: "200px",
-              flexShrink: 0,
-              borderRight: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "24px 16px",
-              background: dark ? "#12122a" : "#faf5ff",
-              gap: "12px"
-            }}>
-              <img
-                src="/ChatGPT Image Jun 13, 2026, 10_27_03 PM.png"
-                alt={friendName}
-                style={{
-                  width: "130px",
-                  height: "130px",
-                  objectFit: "contain",
-                  borderRadius: "50%",
-                  background: dark ? "#1a1a2e" : "#ede9fe",
-                  padding: "8px"
-                }}
-              />
+            <div style={{ width: "200px", flexShrink: 0, borderRight: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px 16px", background: dark ? "#12122a" : "#faf5ff", gap: "12px" }}>
+              <img src="/ChatGPT Image Jun 13, 2026, 10_27_03 PM.png" alt={friendName} style={{ width: "130px", height: "130px", objectFit: "contain", borderRadius: "50%", background: dark ? "#1a1a2e" : "#ede9fe", padding: "8px" }} />
               <div style={{ textAlign: "center" }}>
                 <p style={{ margin: "0 0 4px", fontSize: "15px", fontWeight: "700", color: "#7c3aed" }}>{friendName}</p>
                 <p style={{ margin: 0, fontSize: "13px", color: "#10b981" }}>● Online</p>
               </div>
-              <p style={{
-                margin: 0,
-                fontSize: "13px",
-                color: muted,
-                textAlign: "center",
-                lineHeight: "1.5"
-              }}>
-                Your personal AI best friend — always here for you 💜
-              </p>
+              <p style={{ margin: 0, fontSize: "13px", color: muted, textAlign: "center", lineHeight: "1.5" }}>Your personal AI best friend — always here for you 💜</p>
             </div>
           )}
 
           {/* CHAT COLUMN */}
           <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-
             {/* Messages */}
             <div style={{ flex: 1, overflowY: "auto", padding: "20px", display: "flex", flexDirection: "column", gap: "12px" }}>
-
-              {/* INTRO SECTION shown before user types */}
               {showIntro && (
                 <div style={{ textAlign: "center", padding: "20px 0 10px" }}>
-                  <p style={{ fontSize: "18px", fontWeight: "700", color: text, margin: "0 0 4px" }}>
-                    Hi {localUser.name?.split(" ")[0] || clerkUser?.firstName || "there"} 👋
-                  </p>
-                  <p style={{ fontSize: "13px", color: muted, margin: "0 0 20px" }}>
-                    I'm here to support you in your financial and personal wellness journey.
-                  </p>
+                  <p style={{ fontSize: "18px", fontWeight: "700", color: text, margin: "0 0 4px" }}>Hi {localUser.name?.split(" ")[0] || clerkUser?.firstName || "there"} 👋</p>
+                  <p style={{ fontSize: "13px", color: muted, margin: "0 0 20px" }}>I'm here to support you in your financial and personal wellness journey.</p>
                   <p style={{ fontSize: "13px", color: muted, margin: "0 0 10px" }}>How can I help you today? ›</p>
-
-                  {/* Quick action buttons */}
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", maxWidth: "340px", margin: "0 auto" }}>
-                    {quickActions.map(({ label, emoji }) => (
-                      <button
-                        key={label}
-                        onClick={() => sendMessage(label)}
-                        style={{
-                          padding: "10px 12px",
-                          borderRadius: "12px",
-                          border: `1px solid ${dark ? "#2d2d44" : "#e9d5ff"}`,
-                          background: dark ? "#1a1a2e" : "#faf5ff",
-                          color: dark ? "#a78bfa" : "#7c3aed",
-                          fontSize: "13px",
-                          cursor: "pointer",
-                          textAlign: "left",
-                          fontWeight: "500",
-                          lineHeight: "1.4"
-                        }}
-                      >
-                        {label}
-                      </button>
+                    {quickActions.map(({ label }) => (
+                      <button key={label} onClick={() => sendMessage(label)} style={{ padding: "10px 12px", borderRadius: "12px", border: `1px solid ${dark ? "#2d2d44" : "#e9d5ff"}`, background: dark ? "#1a1a2e" : "#faf5ff", color: dark ? "#a78bfa" : "#7c3aed", fontSize: "13px", cursor: "pointer", textAlign: "left", fontWeight: "500", lineHeight: "1.4" }}>{label}</button>
                     ))}
                   </div>
                 </div>
               )}
-
-              {/* Chat messages */}
               {messages.map((msg, i) => (
                 <div key={i} style={{ display: "flex", justifyContent: msg.from === "user" ? "flex-end" : "flex-start", gap: "8px", alignItems: "flex-end" }}>
-                  {msg.from === "ai" && (
-                    <img
-                      src="/ChatGPT Image Jun 13, 2026, 10_27_03 PM.png"
-                      alt={friendName}
-                      style={{ width: "28px", height: "28px", borderRadius: "50%", objectFit: "cover", flexShrink: 0, background: "#ede9fe" }}
-                    />
-                  )}
-                  <div style={{
-                    maxWidth: "75%",
-                    padding: "12px 16px",
-                    borderRadius: msg.from === "user" ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
-                    background: msg.from === "user" ? "#7c3aed" : dark ? "#2d2d44" : "#f5f3ff",
-                    color: msg.from === "user" ? "white" : text,
-                    fontSize: "13px",
-                    lineHeight: "1.6"
-                  }}>
-                    {msg.text}
-                  </div>
+                  {msg.from === "ai" && <img src="/ChatGPT Image Jun 13, 2026, 10_27_03 PM.png" alt={friendName} style={{ width: "28px", height: "28px", borderRadius: "50%", objectFit: "cover", flexShrink: 0, background: "#ede9fe" }} />}
+                  <div style={{ maxWidth: "75%", padding: "12px 16px", borderRadius: msg.from === "user" ? "18px 18px 4px 18px" : "18px 18px 18px 4px", background: msg.from === "user" ? "#7c3aed" : dark ? "#2d2d44" : "#f5f3ff", color: msg.from === "user" ? "white" : text, fontSize: "13px", lineHeight: "1.6" }}>{msg.text}</div>
                 </div>
               ))}
-
               {loading && (
                 <div style={{ display: "flex", gap: "8px", alignItems: "flex-end" }}>
-                  <img
-                    src="/ChatGPT Image Jun 13, 2026, 10_27_03 PM.png"
-                    alt={friendName}
-                    style={{ width: "28px", height: "28px", borderRadius: "50%", objectFit: "cover", flexShrink: 0, background: "#ede9fe" }}
-                  />
-                  <div style={{ padding: "12px 16px", borderRadius: "18px 18px 18px 4px", background: dark ? "#2d2d44" : "#f5f3ff", fontSize: "13px", color: muted }}>
-                    typing...
-                  </div>
+                  <img src="/ChatGPT Image Jun 13, 2026, 10_27_03 PM.png" alt={friendName} style={{ width: "28px", height: "28px", borderRadius: "50%", objectFit: "cover", flexShrink: 0, background: "#ede9fe" }} />
+                  <div style={{ padding: "12px 16px", borderRadius: "18px 18px 18px 4px", background: dark ? "#2d2d44" : "#f5f3ff", fontSize: "13px", color: muted }}>typing...</div>
                 </div>
               )}
               <div ref={bottomRef} />
             </div>
-
             {/* Input */}
             <div style={{ padding: "16px 20px", borderTop: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`, display: "flex", gap: "10px", flexShrink: 0 }}>
-              <input
-                value={input}
-                onChange={e => setInput(e.target.value)}
-                onKeyDown={e => e.key === "Enter" && sendMessage()}
-                placeholder={`Type your message...`}
-                style={{
-                  flex: 1, padding: "12px 16px", borderRadius: "12px",
-                  border: `1.5px solid ${dark ? "#2d2d44" : "#e5e7eb"}`,
-                  background: dark ? "#0f0f1a" : "#f9fafb",
-                  color: text, fontSize: "14px", outline: "none"
-                }}
-              />
-              <button
-                onClick={() => sendMessage()}
-                style={{ padding: "12px 20px", borderRadius: "12px", border: "none", background: "#7c3aed", color: "white", fontSize: "14px", fontWeight: "600", cursor: "pointer" }}
-              >Send</button>
+              <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && sendMessage()} placeholder="Type your message..." style={{ flex: 1, padding: "12px 16px", borderRadius: "12px", border: `1.5px solid ${dark ? "#2d2d44" : "#e5e7eb"}`, background: dark ? "#0f0f1a" : "#f9fafb", color: text, fontSize: "14px", outline: "none" }} />
+              <button onClick={() => sendMessage()} style={{ padding: "12px 20px", borderRadius: "12px", border: "none", background: "#7c3aed", color: "white", fontSize: "14px", fontWeight: "600", cursor: "pointer" }}>Send</button>
             </div>
           </div>
         </div>
 
-        {/* Right Panel */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "20px", flex: "0 1 280px", minWidth: "240px" }}>
-
-          {/* Quick Suggestions */}
-          <div style={{ ...card, padding: "16px" }}>
-            <p style={{ margin: "0 0 12px", fontSize: "13px", fontWeight: "600", color: text }}>Quick Questions</p>
+        {/* Right Panel — on desktop: column beside chat. On small screens: row below chat */}
+        <div style={isMobile || isTablet
+          ? { display: "flex", gap: "20px", flexWrap: "wrap" }
+          : { display: "flex", flexDirection: "column", gap: "20px" }
+        }>
+          <div style={{ ...card, padding: "16px", flex: 1, minWidth: "200px" }}>
+            <p style={{ margin: "0 0 12px", fontSize: "15px", fontWeight: "600", color: text }}>Quick Questions</p>
             {suggestions.map(s => (
-              <button key={s} onClick={() => sendMessage(s)} style={{
-                width: "100%", marginBottom: "8px", padding: "10px 12px",
-                borderRadius: "10px", border: `1px solid ${dark ? "#2d2d44" : "#e9d5ff"}`,
-                background: dark ? "#0f0f1a" : "#faf5ff",
-                color: dark ? "#a78bfa" : "#7c3aed",
-                fontSize: "13px", cursor: "pointer", textAlign: "left", fontWeight: "500"
-              }}>{s}</button>
+              <button key={s} onClick={() => sendMessage(s)} style={{ width: "100%", marginBottom: "8px", padding: "10px 12px", borderRadius: "10px", border: `1px solid ${dark ? "#2d2d44" : "#e9d5ff"}`, background: dark ? "#0f0f1a" : "#faf5ff", color: dark ? "#a78bfa" : "#7c3aed", fontSize: "14px", cursor: "pointer", textAlign: "left", fontWeight: "500" }}>{s}</button>
             ))}
           </div>
-
-          {/* Mood Check */}
-          <div style={{ ...card, padding: "16px" }}>
-            <p style={{ margin: "0 0 12px", fontSize: "13px", fontWeight: "600", color: text }}>How's your day?</p>
+          <div style={{ ...card, padding: "16px", flex: 1, minWidth: "200px" }}>
+            <p style={{ margin: "0 0 12px", fontSize: "15px", fontWeight: "600", color: text }}>How's your day?</p>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-              {[
-                { emoji: "😁", label: "Great" },
-                { emoji: "🙂", label: "Good" },
-                { emoji: "😐", label: "Okay" },
-                { emoji: "😞", label: "Bad" },
-              ].map(({ emoji, label }) => (
-                <button key={label} onClick={() => sendMessage(`I'm feeling ${label.toLowerCase()} today`)} style={{
-                  padding: "10px", borderRadius: "10px", border: `1px solid ${dark ? "#2d2d44" : "#e5e7eb"}`,
-                  background: dark ? "#0f0f1a" : "#f9fafb",
-                  cursor: "pointer", fontSize: "18px", display: "flex", flexDirection: "column", alignItems: "center", gap: "4px"
-                }}>
-                  {emoji}
-                  <span style={{ fontSize: "10px", color: muted }}>{label}</span>
+              {[{ emoji: "😁", label: "Great" }, { emoji: "🙂", label: "Good" }, { emoji: "😐", label: "Okay" }, { emoji: "😞", label: "Bad" }].map(({ emoji, label }) => (
+                <button key={label} onClick={() => sendMessage(`I'm feeling ${label.toLowerCase()} today`)} style={{ padding: "10px", borderRadius: "10px", border: `1px solid ${dark ? "#2d2d44" : "#e5e7eb"}`, background: dark ? "#0f0f1a" : "#f9fafb", cursor: "pointer", fontSize: "18px", display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
+                  {emoji}<span style={{ fontSize: "13px", color: muted }}>{label}</span>
                 </button>
               ))}
             </div>
