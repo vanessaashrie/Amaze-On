@@ -64,8 +64,6 @@ export default function LoginPage() {
           boxShadow: "0 20px 60px rgba(0,0,0,0.08)",
           display: "flex",
           flexWrap: "wrap",
-          minHeight: "90vh",
-          maxHeight: "900px",
           overflow: "hidden"
         }}>
 
@@ -78,11 +76,11 @@ export default function LoginPage() {
             overflow: "auto",
             boxSizing: "border-box",
             background: "white",
-            padding: "40px 32px",
+            padding: "40px 24px",
             flex: "1 1 340px",
-            minWidth: "300px",
+            minWidth: "280px",
           }}>
-            <div style={{ width: "100%", maxWidth: "380px" }}>
+            <div style={{ width: "100%", maxWidth: "360px" }}>
 
               {/* Heading — centered */}
               <div style={{ textAlign: "center", marginBottom: "32px" }}>
