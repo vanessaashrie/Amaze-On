@@ -22,7 +22,7 @@ A personal life management app with an AI companion that helps students and youn
 | Backend | FastAPI (Python 3.12), Uvicorn |
 | Database | AWS DynamoDB |
 | AI | AWS Bedrock (Nova Lite/Micro), Google Gemini |
-| Deployment | Vercel (frontend), Docker (backend) |
+| Deployment | Vercel (frontend), AWS EC2 (backend) |
 
 ## Project Structure
 
