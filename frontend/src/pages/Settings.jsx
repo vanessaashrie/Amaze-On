@@ -42,7 +42,7 @@ export default function Settings() {
     background: dark ? "#1a1a2e" : "#ffffff",
     borderRadius: "16px", padding: "24px",
     border: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`,
-    marginBottom: "16px"
+    marginBottom: "20px"
   };
   const text = dark ? "#f1f5f9" : "#1f2937";
   const muted = dark ? "#94a3b8" : "#6b7280";

@@ -106,6 +106,7 @@ export default function AICompanion() {
   const card = {
     background: dark ? "#1a1a2e" : "#ffffff",
     borderRadius: "16px",
+    padding: "24px",
     border: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`,
   };
 
@@ -119,50 +120,52 @@ export default function AICompanion() {
         <p style={{ margin: 0, fontSize: "15px", color: muted }}>Chat with {friendName}, your personal AI best friend.</p>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 280px", gap: "20px", height: isMobile ? "auto" : "calc(100vh - 220px)" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", minHeight: "500px", height: isMobile ? "auto" : "calc(100vh - 220px)" }}>
 
         {/* Chat Area */}
-        <div style={{ ...card, display: "flex", overflow: "hidden" }}>
+        <div style={{ ...card, display: "flex", overflow: "hidden", flex: "1 1 600px" }}>
 
           {/* LEFT MASCOT PANEL */}
-          <div style={{
-            width: "200px",
-            flexShrink: 0,
-            borderRight: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "24px 16px",
-            background: dark ? "#12122a" : "#faf5ff",
-            gap: "12px"
-          }}>
-            <img
-              src="/ChatGPT Image Jun 13, 2026, 10_27_03 PM.png"
-              alt={friendName}
-              style={{
-                width: "130px",
-                height: "130px",
-                objectFit: "contain",
-                borderRadius: "50%",
-                background: dark ? "#1a1a2e" : "#ede9fe",
-                padding: "8px"
-              }}
-            />
-            <div style={{ textAlign: "center" }}>
-              <p style={{ margin: "0 0 4px", fontSize: "15px", fontWeight: "700", color: "#7c3aed" }}>{friendName}</p>
-              <p style={{ margin: 0, fontSize: "13px", color: "#10b981" }}>● Online</p>
-            </div>
-            <p style={{
-              margin: 0,
-              fontSize: "13px",
-              color: muted,
-              textAlign: "center",
-              lineHeight: "1.5"
+          {!isMobile && !isTablet && (
+            <div style={{
+              width: "200px",
+              flexShrink: 0,
+              borderRight: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "24px 16px",
+              background: dark ? "#12122a" : "#faf5ff",
+              gap: "12px"
             }}>
-              Your personal AI best friend — always here for you 💜
-            </p>
-          </div>
+              <img
+                src="/ChatGPT Image Jun 13, 2026, 10_27_03 PM.png"
+                alt={friendName}
+                style={{
+                  width: "130px",
+                  height: "130px",
+                  objectFit: "contain",
+                  borderRadius: "50%",
+                  background: dark ? "#1a1a2e" : "#ede9fe",
+                  padding: "8px"
+                }}
+              />
+              <div style={{ textAlign: "center" }}>
+                <p style={{ margin: "0 0 4px", fontSize: "15px", fontWeight: "700", color: "#7c3aed" }}>{friendName}</p>
+                <p style={{ margin: 0, fontSize: "13px", color: "#10b981" }}>● Online</p>
+              </div>
+              <p style={{
+                margin: 0,
+                fontSize: "13px",
+                color: muted,
+                textAlign: "center",
+                lineHeight: "1.5"
+              }}>
+                Your personal AI best friend — always here for you 💜
+              </p>
+            </div>
+          )}
 
           {/* CHAT COLUMN */}
           <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
@@ -247,7 +250,7 @@ export default function AICompanion() {
             </div>
 
             {/* Input */}
-            <div style={{ padding: "16px 20px", borderTop: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`, display: "flex", gap: "10px" }}>
+            <div style={{ padding: "16px 20px", borderTop: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`, display: "flex", gap: "10px", flexShrink: 0 }}>
               <input
                 value={input}
                 onChange={e => setInput(e.target.value)}
@@ -269,7 +272,7 @@ export default function AICompanion() {
         </div>
 
         {/* Right Panel */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px", flex: "0 1 280px", minWidth: "240px" }}>
 
           {/* Quick Suggestions */}
           <div style={{ ...card, padding: "16px" }}>

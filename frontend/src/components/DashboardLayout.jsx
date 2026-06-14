@@ -39,7 +39,7 @@ export default function DashboardLayout({ children }) {
                 <TopBar onMenuClick={() => setSidebarOpen(!sidebarOpen)} showMenu={isMobile} />
                 <main style={{
                     flex: 1, overflowY: "auto",
-                    padding: isMobile ? "16px 12px" : isTablet ? "20px 20px" : "24px 28px",
+                    padding: isMobile ? "12px 12px" : isTablet ? "20px 20px" : "24px 28px",
                     background: dark ? "#0f0f1a" : "#f5f3ff"
                 }}>
                     {children}
