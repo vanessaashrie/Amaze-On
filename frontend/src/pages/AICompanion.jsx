@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useUser } from "@clerk/clerk-react";
 import { useTheme } from "../components/ThemeContext";
 import DashboardLayout from "../components/DashboardLayout";
 
@@ -16,108 +17,85 @@ const quickActions = [
   { label: "Plan my day", emoji: "📅" },
 ];
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+
 export default function AICompanion() {
   const { dark } = useTheme();
+  const { user: clerkUser } = useUser();
 
-  const user = JSON.parse(localStorage.getItem("pocketBuddyUser") || "{}");
-  const friendName = user.friend_name || user.friendName || "Nova";
-
-  // FIX 1: Resolve userId from multiple possible field names
-  const userId = user.clerk_id || user.userId || user.id || null;
+  const localUser = JSON.parse(localStorage.getItem("pocketBuddyUser") || "{}");
+  const [friendName, setFriendName] = useState(localUser.friend_name || localUser.friendName || "Nova");
 
   const [messages, setMessages] = useState([
-    { from: "ai", text: `Hey! I'm ${friendName}, your AI best friend 💜 How are you feeling today? I'm here to help with your finances, health, or just to chat!` }
+    { from: "ai", text: `Hey! I'm ${localUser.friend_name || localUser.friendName || "Nova"}, your AI best friend 💜 How are you feeling today? I'm here to help with your finances, health, or just to chat!` }
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
   const bottomRef = useRef(null);
 
+  // Fetch friend name from backend using Clerk user ID
+  useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const userId = clerkUser?.id || localUser.clerk_id;
+        if (!userId) return;
+        const res = await fetch(`${BACKEND_URL}/auth/profile/${userId}`);
+        if (res.ok) {
+          const profile = await res.json();
+          const name = profile.friend_name || profile.friendName;
+          if (name) {
+            setFriendName(name);
+            setMessages([
+              { from: "ai", text: `Hey! I'm ${name}, your AI best friend 💜 How are you feeling today? I'm here to help with your finances, health, or just to chat!` }
+            ]);
+            // Update localStorage too
+            const updated = { ...localUser, friend_name: name, clerk_id: userId };
+            localStorage.setItem("pocketBuddyUser", JSON.stringify(updated));
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch profile:", err);
+      }
+    }
+    fetchProfile();
+  }, [clerkUser]);
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // FIX 2: Debug log on mount so you can see exactly what's in localStorage
-  useEffect(() => {
-    console.log("=== AI Companion Debug ===");
-    console.log("Full user object:", user);
-    console.log("Resolved userId:", userId);
-    console.log("All user keys:", Object.keys(user));
-  }, []);
-
   const sendMessage = async (text) => {
     const msg = text || input.trim();
     if (!msg) return;
-
-    // FIX 3: Warn early if userId is missing before even sending
-    if (!userId) {
-      console.error("userId is missing! Check localStorage key. User object:", user);
-      setMessages(prev => [...prev, {
-        from: "ai",
-        text: "⚠️ Could not identify your account. Please log out and back in."
-      }]);
-      return;
-    }
-
     setInput("");
     setShowIntro(false);
-
-    const updatedMessages = [...messages, { from: "user", text: msg }];
-    setMessages(updatedMessages);
+    setMessages(prev => [...prev, { from: "user", text: msg }]);
     setLoading(true);
 
     try {
-      // FIX 4: Strip history to only role + content, exclude the initial AI greeting
-      // and use correct field names that backend expects (role: user/assistant)
-      const historyPayload = messages
-        .filter(m => m.from === "user" || m.from === "ai")
-        .map(m => ({
-          role: m.from === "ai" ? "assistant" : "user",
-          content: m.text,
-        }));
-
-      console.log("Sending to backend:", {
-        userId,
-        message: msg,
-        historyLength: historyPayload.length,
-      });
-
-      const res = await fetch("http://localhost:8000/companion/chat", {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: userId,         // FIX 1: use resolved userId
-          message: msg,
-          history: historyPayload, // FIX 4: cleaned history with correct shape
-        }),
+          model: "claude-sonnet-4-6",
+          max_tokens: 1000,
+          system: `You are ${friendName}, a warm, caring AI best friend for a student/young professional. You help with personal finance, health, mental wellness and motivation. Keep responses friendly, concise and supportive. Use emojis occasionally. Address the user warmly.`,
+          messages: [
+            ...messages.filter(m => m.from !== "ai" || messages.indexOf(m) > 0).map(m => ({
+              role: m.from === "user" ? "user" : "assistant",
+              content: m.text
+            })),
+            { role: "user", content: msg }
+          ]
+        })
       });
-
-      // FIX 5: Check HTTP status before parsing JSON
-      if (!res.ok) {
-        const errText = await res.text();
-        console.error("Backend returned error:", res.status, errText);
-        throw new Error(`Server error ${res.status}`);
-      }
-
       const data = await res.json();
-
-      console.log("Backend response:", data);
-
-      // FIX 6: Safely access data.reply with fallback
-      const replyText = data.reply || "I'm here for you! 💜";
-
-      setMessages(prev => [...prev, { from: "ai", text: replyText }]);
-
-    } catch (error) {
-      console.error("Companion fetch error:", error);
-      setMessages(prev => [...prev, {
-        from: "ai",
-        text: "Oops, something went wrong. Try again! 💜",
-      }]);
+      const reply = data.content?.[0]?.text || "I'm here for you! 💜";
+      setMessages(prev => [...prev, { from: "ai", text: reply }]);
+    } catch {
+      setMessages(prev => [...prev, { from: "ai", text: "Oops, something went wrong. Try again! 💜" }]);
     }
-
     setLoading(false);
   };
 
@@ -173,8 +151,14 @@ export default function AICompanion() {
               <p style={{ margin: "0 0 4px", fontSize: "15px", fontWeight: "700", color: "#7c3aed" }}>{friendName}</p>
               <p style={{ margin: 0, fontSize: "11px", color: "#10b981" }}>● Online</p>
             </div>
-            <p style={{ margin: 0, fontSize: "11px", color: muted, textAlign: "center", lineHeight: "1.5" }}>
-              Always here for you 💜
+            <p style={{
+              margin: 0,
+              fontSize: "11px",
+              color: muted,
+              textAlign: "center",
+              lineHeight: "1.5"
+            }}>
+              Your personal AI best friend — always here for you 💜
             </p>
           </div>
 
@@ -184,15 +168,18 @@ export default function AICompanion() {
             {/* Messages */}
             <div style={{ flex: 1, overflowY: "auto", padding: "20px", display: "flex", flexDirection: "column", gap: "12px" }}>
 
+              {/* INTRO SECTION shown before user types */}
               {showIntro && (
                 <div style={{ textAlign: "center", padding: "20px 0 10px" }}>
                   <p style={{ fontSize: "18px", fontWeight: "700", color: text, margin: "0 0 4px" }}>
-                    Hi {user.name?.split(" ")[0] || "there"} 👋
+                    Hi {localUser.name?.split(" ")[0] || clerkUser?.firstName || "there"} 👋
                   </p>
                   <p style={{ fontSize: "13px", color: muted, margin: "0 0 20px" }}>
                     I'm here to support you in your financial and personal wellness journey.
                   </p>
                   <p style={{ fontSize: "12px", color: muted, margin: "0 0 10px" }}>How can I help you today? ›</p>
+
+                  {/* Quick action buttons */}
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", maxWidth: "340px", margin: "0 auto" }}>
                     {quickActions.map(({ label, emoji }) => (
                       <button
@@ -218,6 +205,7 @@ export default function AICompanion() {
                 </div>
               )}
 
+              {/* Chat messages */}
               {messages.map((msg, i) => (
                 <div key={i} style={{ display: "flex", justifyContent: msg.from === "user" ? "flex-end" : "flex-start", gap: "8px", alignItems: "flex-end" }}>
                   {msg.from === "ai" && (
@@ -262,7 +250,7 @@ export default function AICompanion() {
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={e => e.key === "Enter" && sendMessage()}
-                placeholder="Type your message..."
+                placeholder={`Type your message...`}
                 style={{
                   flex: 1, padding: "12px 16px", borderRadius: "12px",
                   border: `1.5px solid ${dark ? "#2d2d44" : "#e5e7eb"}`,
@@ -281,6 +269,7 @@ export default function AICompanion() {
         {/* Right Panel */}
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
 
+          {/* Quick Suggestions */}
           <div style={{ ...card, padding: "16px" }}>
             <p style={{ margin: "0 0 12px", fontSize: "13px", fontWeight: "600", color: text }}>Quick Questions</p>
             {suggestions.map(s => (
@@ -294,6 +283,7 @@ export default function AICompanion() {
             ))}
           </div>
 
+          {/* Mood Check */}
           <div style={{ ...card, padding: "16px" }}>
             <p style={{ margin: "0 0 12px", fontSize: "13px", fontWeight: "600", color: text }}>How's your day?</p>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
