@@ -75,12 +75,15 @@ Examples:
 - "How are you?" → nothing found
 """
 
-    response = bedrock.converse(
-        modelId=BEDROCK_MODEL_ID,
-        messages=[{"role": "user", "content": [{"text": detection_prompt}]}],
-    )
-
-    raw = response["output"]["message"]["content"][0]["text"]
+    try:
+        response = bedrock.converse(
+            modelId=BEDROCK_MODEL_ID,
+            messages=[{"role": "user", "content": [{"text": detection_prompt}]}],
+        )
+        raw = response["output"]["message"]["content"][0]["text"]
+    except Exception as detect_error:
+        print("Detection failed, skipping:", detect_error)
+        return ""
 
     try:
         clean = raw.strip().replace("```json", "").replace("```", "").strip()
