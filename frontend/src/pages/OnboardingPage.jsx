@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const BACKEND_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export default function OnboardingPage() {
   const { user } = useUser();
