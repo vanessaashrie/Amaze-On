@@ -18,8 +18,9 @@ def list_goals(user_id: str):
 
 @router.patch("/update")
 def update_goal(data: GoalUpdateRequest):
+    # clerk_id from frontend maps to userId in DynamoDB
     updated = update_goal_progress(
-        data.clerk_id,
+        data.clerk_id,   # used directly as userId — matches DynamoDB partition key
         data.goal_id,
         data.current,
         data.is_completed

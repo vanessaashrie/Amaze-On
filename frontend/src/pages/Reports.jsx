@@ -159,6 +159,25 @@ export default function Reports() {
           ))}
         </div>
       </div>
+      {/* Recent Transactions List */}
+      <div style={{ ...card, marginTop: "20px" }}>
+        <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>Recent Transactions</h3>
+        {transactions.length === 0 ? (
+          <p style={{ fontSize: "14px", color: muted }}>No transactions yet.</p>
+        ) : (
+          transactions.slice(0, 10).map((t) => (
+            <div key={t.transaction_id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 0", borderBottom: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}` }}>
+              <div>
+                <p style={{ margin: "0 0 2px", fontSize: "14px", fontWeight: "500", color: text }}>{t.name}</p>
+                <p style={{ margin: 0, fontSize: "12px", color: muted }}>{t.category} · {t.date ? new Date(t.date).toLocaleDateString("en-IN", { day: "numeric", month: "short" }) : "—"}</p>
+              </div>
+              <span style={{ fontSize: "14px", fontWeight: "600", color: t.type === "income" ? "#10b981" : "#ef4444" }}>
+                {t.type === "income" ? "+" : "-"}₹{parseFloat(t.amount).toLocaleString("en-IN")}
+              </span>
+            </div>
+          ))
+        )}
+      </div>
     </DashboardLayout>
   );
 }

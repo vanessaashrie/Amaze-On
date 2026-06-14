@@ -194,14 +194,19 @@ def get_goals(user_id: str) -> list:
 
 def update_goal_progress(user_id: str, goal_id: str, current: str, is_completed: bool = False) -> dict:
     """Update a goal's current progress value and completion status."""
-    response = goals_table.update_item(
-        Key={"userId": user_id, "goal_id": goal_id},
-        UpdateExpression="SET #cur = :c, is_completed = :done",
-        ExpressionAttributeNames={"#cur": "current"},
-        ExpressionAttributeValues={":c": current, ":done": is_completed},
-        ReturnValues="ALL_NEW"
-    )
-    return response.get("Attributes", {})
+    # First fetch the existing item to preserve all fields
+    existing = goals_table.get_item(
+        Key={"userId": user_id, "goal_id": goal_id}
+    ).get("Item")
+
+    if not existing:
+        return {}
+
+    # Merge updated fields and write back
+    existing["current"]      = current
+    existing["is_completed"] = is_completed
+    goals_table.put_item(Item=existing)
+    return existing
 
 
 # ═══════════════════════════════════════════════════════════════════════
