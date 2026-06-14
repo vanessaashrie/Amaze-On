@@ -2,6 +2,10 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 import boto3
 import json
+import os
+import google.generativeai as genai
+
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 from services.dynamodb import (
     get_journal_entries,
@@ -203,9 +207,17 @@ GOALS:
                     messages=messages,
                 )
                 reply = response["output"]["message"]["content"][0]["text"]
-            except Exception as e:
-                print("All models failed:", e)
-                reply = "I'm taking a short break! Try again in a moment 💜"
+            except Exception as nova_micro_error:
+                print("Nova Micro failed, trying Gemini:", nova_micro_error)
+                try:
+                    gemini_model = genai.GenerativeModel("gemini-1.5-flash")
+                    gemini_response = gemini_model.generate_content(
+                        f"You are {req.friend_name}, a warm and supportive AI companion. Be concise and helpful.\n\nUser: {req.message}"
+                    )
+                    reply = gemini_response.text
+                except Exception as gemini_error:
+                    print("Gemini also failed:", gemini_error)
+                    reply = "I'm taking a short break! Try again in a moment 💜"
 
         return {"reply": reply}
 
