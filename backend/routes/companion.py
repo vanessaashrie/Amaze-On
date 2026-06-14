@@ -15,7 +15,8 @@ from services.dynamodb import (
 
 router = APIRouter()
 
-BEDROCK_MODEL_ID = "amazon.nova-lite-v1:0"
+BEDROCK_MODEL_ID  = "amazon.nova-lite-v1:0"
+FALLBACK_MODEL_ID = "amazon.nova-micro-v1:0"
 
 bedrock = boto3.client(
     "bedrock-runtime",
@@ -175,22 +176,37 @@ GOALS:
         # Add logged confirmation to system prompt if something was saved
         log_note = f"\n\nYou just automatically logged this from the user's message:\n{logged_summary}" if logged_summary else ""
 
-        response = bedrock.converse(
-            modelId=BEDROCK_MODEL_ID,
-            system=[{
-                "text": (
-                    f"You are {req.friend_name}, a warm and supportive AI companion. "
-                    "You have access to the user's personal data below. "
-                    "Reference it naturally when relevant. "
-                    "When the user mentions spending money or health activity, confirm what was logged. "
-                    "Be concise, empathetic, and helpful.\n\n"
-                    "User data:\n" + context + log_note
+        try:
+            response = bedrock.converse(
+                modelId=BEDROCK_MODEL_ID,
+                system=[{
+                    "text": (
+                        f"You are {req.friend_name}, a warm and supportive AI companion. "
+                        "You have access to the user's personal data below. "
+                        "Reference it naturally when relevant. "
+                        "When the user mentions spending money or health activity, confirm what was logged. "
+                        "Be concise, empathetic, and helpful.\n\n"
+                        "User data:\n" + context + log_note
+                    )
+                }],
+                messages=messages,
+            )
+            reply = response["output"]["message"]["content"][0]["text"]
+        except Exception as bedrock_error:
+            print("Nova Lite failed, trying Nova Micro:", bedrock_error)
+            try:
+                response = bedrock.converse(
+                    modelId=FALLBACK_MODEL_ID,
+                    system=[{
+                        "text": "You are Nova, a warm and supportive AI companion. Be concise, empathetic, and helpful."
+                    }],
+                    messages=messages,
                 )
-            }],
-            messages=messages,
-        )
+                reply = response["output"]["message"]["content"][0]["text"]
+            except Exception as e:
+                print("All models failed:", e)
+                reply = "I'm taking a short break! Try again in a moment 💜"
 
-        reply = response["output"]["message"]["content"][0]["text"]
         return {"reply": reply}
 
     except Exception as e:
