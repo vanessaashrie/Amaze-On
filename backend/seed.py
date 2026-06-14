@@ -6,9 +6,9 @@ from decimal import Decimal
 
 # CONFIG
 USER_ID = "user_3F4SWrwE7X19nx06ObrzHbx8PCh"
-AWS_REGION = "eu-north-1"
-AWS_ACCESS_KEY_ID = "AKIA3WP7HO2LB43MMT5V"
-AWS_SECRET_ACCESS_KEY = "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"
+AWS_REGION = os.getenv("AWS_REGION", "eu-north-1")
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 
 dynamodb = boto3.resource(
     "dynamodb",
