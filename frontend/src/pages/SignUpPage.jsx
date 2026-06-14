@@ -89,13 +89,13 @@ export default function SignUpPage() {
           background: "white",
           borderRadius: "24px",
           boxShadow: "0 20px 60px rgba(0,0,0,0.08)",
-          display: "flex",
-          flexWrap: "wrap",
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
           overflow: "hidden",
         }}>
 
-          {/* LEFT — mascot image (hidden on mobile) */}
-          <div className="hide-on-mobile" style={{ display: "flex", flex: "1 1 340px", minWidth: "300px" }}>
+          {/* LEFT — mascot image */}
+          <div style={{ display: "flex" }}>
             <img
               src="/mascot.png"
               alt="Pocket Buddy"
@@ -113,120 +113,117 @@ export default function SignUpPage() {
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            alignItems: "center",
+            alignItems: "stretch",
             background: "white",
-            padding: "40px 24px",
+            padding: "48px 56px",
+            borderLeft: "1px solid #f3f4f6",
             boxSizing: "border-box",
             gap: "24px",
-            flex: "1 1 340px",
-            minWidth: "280px",
           }}>
-            <div style={{ width: "100%", maxWidth: "360px" }}>
 
-              {/* Heading */}
-              <div style={{ textAlign: "center" }}>
-                <h2 style={{
-                  fontSize: "36px",
-                  fontWeight: "800",
-                  color: "#1f2937",
-                  margin: "0 0 10px",
-                }}>
-                  Create Account
-                </h2>
-                <p style={{
+            {/* Heading */}
+            <div style={{ textAlign: "center" }}>
+              <h2 style={{
+                fontSize: "36px",
+                fontWeight: "800",
+                color: "#1f2937",
+                margin: "0 0 10px",
+              }}>
+                Create Account
+              </h2>
+              <p style={{
+                fontSize: "15px",
+                color: "#6b7280",
+                lineHeight: "1.6",
+                margin: 0,
+              }}>
+                Welcome! Please fill in the details to get started 🌱
+              </p>
+            </div>
+
+            {/* Clerk form */}
+            <SignUp
+              routing="path"
+              path="/sign-up"
+              signInUrl="/"
+              forceRedirectUrl="/onboarding"
+              afterSignUpUrl="/onboarding"
+              appearance={{
+                variables: {
+                  colorPrimary: "#7c3aed",
+                  borderRadius: "10px",
                   fontSize: "15px",
-                  color: "#6b7280",
-                  lineHeight: "1.6",
-                  margin: 0,
-                }}>
-                  Welcome! Please fill in the details to get started 🌱
-                </p>
-              </div>
-
-              {/* Clerk form */}
-              <SignUp
-                routing="path"
-                path="/sign-up"
-                signInUrl="/"
-                forceRedirectUrl="/onboarding"
-                afterSignUpUrl="/onboarding"
-                appearance={{
-                  variables: {
-                    colorPrimary: "#7c3aed",
+                  colorBackground: "white",
+                  colorInputBackground: "white",
+                  spacingUnit: "16px",
+                },
+                elements: {
+                  rootBox: { width: "100%" },
+                  card: {
+                    boxShadow: "none",
+                    padding: "0",
+                    margin: "0",
+                    width: "100%",
+                    border: "none",
+                    background: "transparent",
+                  },
+                  cardBox: {
+                    boxShadow: "none",
+                    border: "none",
+                    background: "transparent",
+                  },
+                  headerTitle: { display: "none", height: "0", margin: "0", padding: "0" },
+                  headerSubtitle: { display: "none", height: "0", margin: "0", padding: "0" },
+                  header: { display: "none", height: "0", margin: "0", padding: "0" },
+                  socialButtonsBlockButton: {
+                    border: "1.5px solid #e5e7eb",
                     borderRadius: "10px",
                     fontSize: "15px",
-                    colorBackground: "white",
-                    colorInputBackground: "white",
-                    spacingUnit: "16px",
+                    background: "white",
+                    boxShadow: "none",
+                    padding: "13px",
                   },
-                  elements: {
-                    rootBox: { width: "100%" },
-                    card: {
-                      boxShadow: "none",
-                      padding: "0",
-                      margin: "0",
-                      width: "100%",
-                      border: "none",
-                      background: "transparent",
-                    },
-                    cardBox: {
-                      boxShadow: "none",
-                      border: "none",
-                      background: "transparent",
-                    },
-                    headerTitle: { display: "none", height: "0", margin: "0", padding: "0" },
-                    headerSubtitle: { display: "none", height: "0", margin: "0", padding: "0" },
-                    header: { display: "none", height: "0", margin: "0", padding: "0" },
-                    socialButtonsBlockButton: {
-                      border: "1.5px solid #e5e7eb",
-                      borderRadius: "10px",
-                      fontSize: "15px",
-                      background: "white",
-                      boxShadow: "none",
-                      padding: "13px",
-                    },
-                    formButtonPrimary: {
-                      background: "#7c3aed",
-                      borderRadius: "10px",
-                      fontSize: "15px",
-                      padding: "14px",
-                      boxShadow: "none",
-                    },
-                    footerActionLink: { color: "#7c3aed", fontSize: "14px" },
-                    formFieldInput: {
-                      fontSize: "15px",
-                      border: "1.5px solid #e5e7eb",
-                      borderRadius: "10px",
-                      padding: "13px 14px",
-                      boxShadow: "none",
-                      outline: "none",
-                    },
-                    formFieldLabel: {
-                      fontSize: "14px",
-                      color: "#374151",
-                    },
-                    dividerLine: { background: "#f3f4f6" },
-                    dividerText: { color: "#9ca3af", fontSize: "14px" },
-                    footer: {
-                      background: "transparent",
-                      border: "none",
-                      boxShadow: "none",
-                    },
-                    footerPages: {
-                      background: "transparent",
-                      boxShadow: "none",
-                      border: "none",
-                    },
-                    main: { padding: "0", marginTop: "0" },
-                    form: { gap: "16px" },
-                    page: { background: "transparent" },
-                    navbar: { display: "none" },
-                    navbarButtons: { display: "none" },
-                  }
-                }}
-              />
+                  formButtonPrimary: {
+                    background: "#7c3aed",
+                    borderRadius: "10px",
+                    fontSize: "15px",
+                    padding: "14px",
+                    boxShadow: "none",
+                  },
+                  footerActionLink: { color: "#7c3aed", fontSize: "14px" },
+                  formFieldInput: {
+                    fontSize: "15px",
+                    border: "1.5px solid #e5e7eb",
+                    borderRadius: "10px",
+                    padding: "13px 14px",
+                    boxShadow: "none",
+                    outline: "none",
+                  },
+                  formFieldLabel: {
+                    fontSize: "14px",
+                    color: "#374151",
+                  },
+                  dividerLine: { background: "#f3f4f6" },
+                  dividerText: { color: "#9ca3af", fontSize: "14px" },
+                  footer: {
+                    background: "transparent",
+                    border: "none",
+                    boxShadow: "none",
+                  },
+                  footerPages: {
+                    background: "transparent",
+                    boxShadow: "none",
+                    border: "none",
+                  },
+                  main: { padding: "0", marginTop: "0" },
+                  form: { gap: "16px" },
+                  page: { background: "transparent" },
+                  navbar: { display: "none" },
+                  navbarButtons: { display: "none" },
+                }
+              }}
+            />
 
-            </div>
           </div>
 
         </div>

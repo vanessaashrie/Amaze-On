@@ -226,7 +226,7 @@ export default function OnboardingPage() {
         </div>
 
         {/* Body */}
-        <div style={{ padding: "36px 24px 40px" }}>
+        <div style={{ padding: "36px 48px 40px" }}>
 
           {/* Heading */}
           <div style={{ textAlign: "center", marginBottom: "8px" }}>
@@ -241,7 +241,7 @@ export default function OnboardingPage() {
           {/* Basic Information */}
           <p style={sectionTitle}>Basic Information</p>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
             <div>
               <label style={labelStyle}>Full Name</label>
               <div style={fieldWrap}>
@@ -282,7 +282,7 @@ export default function OnboardingPage() {
           {/* More About You */}
           <p style={sectionTitle}>More About You</p>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
             <div>
               <label style={labelStyle}>Gender</label>
               <div style={{ ...fieldWrap, position: "relative" }}>
@@ -352,7 +352,7 @@ export default function OnboardingPage() {
             <span style={{ fontSize: "12px", fontWeight: "400", color: "#9ca3af" }}>(For your safety)</span>
           </p>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
             <div>
               <label style={labelStyle}>Contact Name</label>
               <div style={fieldWrap}>
