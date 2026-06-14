@@ -1,45 +1,49 @@
 # Pocket Buddy 💜
 
-> Your AI-powered personal life companion for students and young professionals.
+> An end-to-end AI-powered life companion built with a customer-first approach — designed to make every customer's daily life simpler, healthier, and more organized.
 
 ---
 
-## 🎯 Problem We're Solving
+## 🎯 Customer Problem
 
-Students and young professionals struggle to manage money, health, and goals across scattered apps — with no personal support when they need it most.
+We started by working backwards from the customer. Our customers — students and young professionals — told us they feel overwhelmed managing money, health, and personal goals across disconnected apps. They have no single, personalized space that truly understands their needs — and no support system available when they need it most.
 
-**Pocket Buddy** brings it all together in one place, with an AI best friend that tracks your life, chats with you, and saves data automatically from your conversations.
-
----
-
-## 💡 How We Solve It
-
-- **One unified dashboard** — Budget, spending, health, sleep, goals, and mood in one view
-- **AI Companion** — A named AI best friend (you choose the name!) that can chat naturally AND automatically save data you mention ("I spent ₹200 on lunch" → automatically logs expense)
-- **Smart tracking** — Journal with mood analysis, expense categorization, health habits, goal progress, and menstrual cycle predictions
-- **Zero effort** — Just talk to your AI friend; it handles the rest
+**Pocket Buddy** is our end-to-end solution: a customer-centric platform that combines life tracking with a personalized AI companion, delivering the right support at the right time — all in one place.
 
 ---
 
-## 🏗️ How It's Built
+## 💡 How We Deliver Value to the Customer
+
+We obsessed over the customer experience at every step:
+
+- **One unified dashboard** — Customers see their budget, spending, health, sleep, goals, and mood in a single view. No switching between apps.
+- **AI Companion** — Every customer gets a named AI best friend (they choose the name!) that chats naturally and automatically saves data the customer mentions ("I spent ₹200 on lunch" → expense logged instantly)
+- **Smart tracking** — The customer's journal, expenses, health habits, goal progress, and cycle predictions are all connected — giving them a holistic view of their life
+- **Zero effort for the customer** — Customers just talk to their AI friend; the system handles everything behind the scenes
+
+---
+
+## 🏗️ How It's Built (End-to-End Architecture)
 
 ![Tech Architecture](./architecture.svg)
 
+We built an end-to-end solution using scalable AWS services to ensure every customer gets a fast, reliable experience:
+
 | Layer | Technology |
 |-------|-----------|
-| Frontend | React 18 (UI library), Vite (build tool), React Router (page navigation), Recharts (charts), Axios (API calls) |
-| Login & Authentication | Clerk (handles Google sign-in and email/password login) |
+| Frontend (what customers see) | React 18 (UI library), Vite (build tool), React Router (page navigation), Recharts (charts), Axios (API calls) |
+| Login & Authentication | Clerk (handles Google sign-in and email/password login for customers) |
 | Backend (server logic) | FastAPI (a Python web framework), Uvicorn (a lightweight server runner) |
-| Database (data storage) | AWS DynamoDB (a cloud-hosted NoSQL database with 6 tables) |
-| AI (smart features) | AWS Bedrock Nova Lite/Micro (Amazon's AI models), Google Gemini (backup AI) |
-| Hosting | Vercel (hosts the frontend), AWS EC2 (hosts the backend server) |
+| Database (customer data storage) | AWS DynamoDB (a cloud-hosted NoSQL database with 6 tables) |
+| AI (customer-facing smart features) | AWS Bedrock Nova Lite/Micro (Amazon's AI models), Google Gemini (backup AI) |
+| Hosting | Vercel (hosts the customer-facing app), AWS EC2 (hosts the backend server) |
 | Local packaging (run everything together) | Docker + docker-compose (bundles the app so it runs anywhere) |
 
 ---
 
 ## 🚀 Live Demo
 
-- **App:** [amaze-on.vercel.app](https://amaze-on-vanessas-projects-583e2db4.vercel.app)
+- **Customer App:** [amaze-on.vercel.app](https://amaze-on-vanessas-projects-583e2db4.vercel.app)
 - **Server:** Hosted on AWS
 
 ---
@@ -51,7 +55,7 @@ Students and young professionals struggle to manage money, health, and goals acr
 - Python 3.12 or newer
 - Node.js 20 or newer
 - AWS credentials (to connect to the database)
-- A Clerk account key (used for login)
+- A Clerk account key (used for customer login)
 - A Gemini API key (for the AI companion)
 
 ### 1. Clone the repo (download the code)
@@ -110,19 +114,21 @@ docker-compose up
 
 ---
 
-## ✨ Features
+## ✨ Features (What Customers Get)
 
-| Feature | Description |
-|---------|-------------|
-| 🤖 AI Companion | Named AI best friend that chats, motivates, and automatically saves data you mention |
-| 💰 Money Tracker | Track money in and out, grouped by category, with charts |
-| ❤️ Health Tracker | Sleep, steps, water, heart rate, BMI (body mass index), daily habits |
-| 📓 Journal | Write diary entries with mood labels and history |
-| 🎯 Goals | Set, track, and complete goals across categories |
-| 🩸 Cycle Tracker | Period logging with next cycle & fertility predictions |
-| 📊 Reports | Monthly wellness score, spending vs saving trends, AI insights |
-| 📱 Works on all screen sizes | Desktop, tablet, and mobile |
-| 🌙 Dark Mode | Stays on even after you close the app |
+Every feature was designed by working backwards from what customers actually need:
+
+| Feature | Customer Benefit |
+|---------|-----------------|
+| 🤖 AI Companion | A personal AI best friend that chats, motivates, and automatically saves data customers mention |
+| 💰 Money Tracker | Customers track money in and out, grouped by category, with visual charts |
+| ❤️ Health Tracker | Customers log sleep, steps, water, heart rate, BMI (body mass index), and daily habits |
+| 📓 Journal | Customers write diary entries with mood labels and view their history |
+| 🎯 Goals | Customers set, track, and complete personal goals across categories |
+| 🩸 Cycle Tracker | Customers log periods and get next cycle & fertility predictions |
+| 📊 Reports | Customers see monthly wellness scores, spending vs saving trends, and AI-generated insights |
+| 📱 Works on all screen sizes | Customers can use it on desktop, tablet, or mobile |
+| 🌙 Dark Mode | Stays on even after the customer closes the app |
 
 ---
 
@@ -130,27 +136,27 @@ docker-compose up
 
 | Method | Endpoint | What It Does |
 |--------|----------|-------------|
-| POST | `/auth/onboarding` | Save user profile during sign-up |
-| GET | `/auth/profile/{id}` | Get a user's saved profile |
-| POST | `/journal/` | Create a new journal entry |
-| GET | `/journal/{id}` | Get all journal entries for a user |
-| POST | `/money/` | Add a new income or expense |
-| GET | `/money/{id}` | Get all transactions for a user |
-| POST | `/health/` | Log health data (sleep, steps, etc.) |
-| GET | `/health/{id}` | Get health logs for a user |
-| GET | `/health/{id}/today` | Get today's health log |
-| POST | `/goals/` | Create a new goal |
-| GET | `/goals/{id}` | Get all goals for a user |
-| PATCH | `/goals/update` | Update a goal's progress |
-| POST | `/cycle/log` | Log a period entry |
-| GET | `/cycle/{id}` | Get cycle history + predicted dates |
-| POST | `/companion/chat` | Send a message to the AI companion |
+| POST | `/auth/onboarding` | Save customer profile during sign-up |
+| GET | `/auth/profile/{id}` | Get a customer's saved profile |
+| POST | `/journal/` | Create a new journal entry for the customer |
+| GET | `/journal/{id}` | Get all journal entries for a customer |
+| POST | `/money/` | Add a new income or expense for the customer |
+| GET | `/money/{id}` | Get all transactions for a customer |
+| POST | `/health/` | Log health data (sleep, steps, etc.) for the customer |
+| GET | `/health/{id}` | Get health logs for a customer |
+| GET | `/health/{id}/today` | Get today's health log for the customer |
+| POST | `/goals/` | Create a new goal for the customer |
+| GET | `/goals/{id}` | Get all goals for a customer |
+| POST | `/goals/update` | Update a customer's goal progress |
+| POST | `/cycle/log` | Log a period entry for the customer |
+| GET | `/cycle/{id}` | Get cycle history + predicted dates for the customer |
+| POST | `/companion/chat` | Send a message to the customer's AI companion |
 
 ---
 
-## 🗄️ How Data is Stored
+## 🗄️ How Customer Data is Stored
 
-Each table stores a different type of user data in AWS DynamoDB (a cloud database):
+Each table stores a different type of customer data in AWS DynamoDB (a cloud database), ensuring fast reads and writes at any scale:
 
 | Table | Main Key | Sort Key |
 |-------|----------|----------|
@@ -168,20 +174,20 @@ Each table stores a different type of user data in AWS DynamoDB (a cloud databas
 ```
 ├── backend/
 │   ├── main.py                 # Server starting point
-│   ├── routes/                 # Handles requests for each feature
-│   │   ├── auth.py             # New user setup & profile
+│   ├── routes/                 # Handles requests for each customer feature
+│   │   ├── auth.py             # Customer onboarding & profile
 │   │   ├── companion.py        # AI chat + automatic data saving
-│   │   ├── journal.py          # Create, read, update, delete journal entries
-│   │   ├── money.py            # Transactions
-│   │   ├── health.py           # Health logs
-│   │   ├── goals.py            # Create, read, update, delete goals
-│   │   └── cycle.py            # Menstrual cycle tracker
+│   │   ├── journal.py          # Customer journal entries
+│   │   ├── money.py            # Customer transactions
+│   │   ├── health.py           # Customer health logs
+│   │   ├── goals.py            # Customer goals
+│   │   └── cycle.py            # Customer cycle tracker
 │   ├── models/                 # Data format definitions
 │   ├── services/dynamodb.py    # All database read/write operations
 │   └── requirements.txt
 ├── frontend/
 │   ├── src/
-│   │   ├── pages/              # Each screen of the app
+│   │   ├── pages/              # Each screen the customer interacts with
 │   │   ├── components/         # Sidebar, TopBar, Layout, Theme
 │   │   ├── hooks/              # Detects screen size for layout
 │   │   └── api.js              # Handles all server communication
@@ -192,6 +198,17 @@ Each table stores a different type of user data in AWS DynamoDB (a cloud databas
 
 ---
 
+## 🔄 Customer Backwards Approach
+
+We followed the **Customer Backwards** principle throughout development:
+
+1. **Started with the customer pain point** — Not the technology. We interviewed students and identified their top struggles: fragmented tracking, no personal support, and app fatigue.
+2. **Designed the end-to-end customer experience first** — Before writing a single line of code, we mapped the ideal customer journey from sign-up to daily use.
+3. **Built features customers asked for** — Every feature (AI companion, money tracker, cycle predictor) came directly from customer feedback.
+4. **Measured success by customer outcomes** — Does the customer feel less stressed? Can they track their life in under 30 seconds? Is the AI actually helpful?
+
+---
+
 ## 👥 Team
 
-Built with 💜 by **Team Amaze-On**
+Built with 💜 by **Team Amaze-On** — obsessed with making our customers' lives better.
