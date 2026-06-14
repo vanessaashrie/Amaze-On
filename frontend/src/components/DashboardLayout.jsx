@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Sidebar from "./SideBar";
+import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
 import { useTheme } from "./ThemeContext";
 import { useResponsive } from "../hooks/useMediaQuery";
