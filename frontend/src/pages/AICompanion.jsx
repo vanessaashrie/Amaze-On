@@ -112,11 +112,11 @@ export default function AICompanion() {
   return (
     <DashboardLayout>
       <div style={{ marginBottom: "20px" }}>
-        <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700", color: text, display: "flex", alignItems: "center", gap: "8px" }}>
+        <h2 style={{ margin: "0 0 4px", fontSize: "26px", fontWeight: "700", color: text, display: "flex", alignItems: "center", gap: "8px" }}>
           <img src="/star.png" alt="stars" style={{ width: "28px", height: "28px", objectFit: "contain" }} />
           AI Companion
         </h2>
-        <p style={{ margin: 0, fontSize: "13px", color: muted }}>Chat with {friendName}, your personal AI best friend.</p>
+        <p style={{ margin: 0, fontSize: "15px", color: muted }}>Chat with {friendName}, your personal AI best friend.</p>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 280px", gap: "20px", height: isMobile ? "auto" : "calc(100vh - 220px)" }}>
@@ -151,11 +151,11 @@ export default function AICompanion() {
             />
             <div style={{ textAlign: "center" }}>
               <p style={{ margin: "0 0 4px", fontSize: "15px", fontWeight: "700", color: "#7c3aed" }}>{friendName}</p>
-              <p style={{ margin: 0, fontSize: "11px", color: "#10b981" }}>● Online</p>
+              <p style={{ margin: 0, fontSize: "13px", color: "#10b981" }}>● Online</p>
             </div>
             <p style={{
               margin: 0,
-              fontSize: "11px",
+              fontSize: "13px",
               color: muted,
               textAlign: "center",
               lineHeight: "1.5"
@@ -179,7 +179,7 @@ export default function AICompanion() {
                   <p style={{ fontSize: "13px", color: muted, margin: "0 0 20px" }}>
                     I'm here to support you in your financial and personal wellness journey.
                   </p>
-                  <p style={{ fontSize: "12px", color: muted, margin: "0 0 10px" }}>How can I help you today? ›</p>
+                  <p style={{ fontSize: "13px", color: muted, margin: "0 0 10px" }}>How can I help you today? ›</p>
 
                   {/* Quick action buttons */}
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", maxWidth: "340px", margin: "0 auto" }}>
@@ -193,7 +193,7 @@ export default function AICompanion() {
                           border: `1px solid ${dark ? "#2d2d44" : "#e9d5ff"}`,
                           background: dark ? "#1a1a2e" : "#faf5ff",
                           color: dark ? "#a78bfa" : "#7c3aed",
-                          fontSize: "12px",
+                          fontSize: "13px",
                           cursor: "pointer",
                           textAlign: "left",
                           fontWeight: "500",
@@ -257,19 +257,19 @@ export default function AICompanion() {
                   flex: 1, padding: "12px 16px", borderRadius: "12px",
                   border: `1.5px solid ${dark ? "#2d2d44" : "#e5e7eb"}`,
                   background: dark ? "#0f0f1a" : "#f9fafb",
-                  color: text, fontSize: "13px", outline: "none"
+                  color: text, fontSize: "14px", outline: "none"
                 }}
               />
               <button
                 onClick={() => sendMessage()}
-                style={{ padding: "12px 20px", borderRadius: "12px", border: "none", background: "#7c3aed", color: "white", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
+                style={{ padding: "12px 20px", borderRadius: "12px", border: "none", background: "#7c3aed", color: "white", fontSize: "14px", fontWeight: "600", cursor: "pointer" }}
               >Send</button>
             </div>
           </div>
         </div>
 
         {/* Right Panel */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
 
           {/* Quick Suggestions */}
           <div style={{ ...card, padding: "16px" }}>
@@ -280,7 +280,7 @@ export default function AICompanion() {
                 borderRadius: "10px", border: `1px solid ${dark ? "#2d2d44" : "#e9d5ff"}`,
                 background: dark ? "#0f0f1a" : "#faf5ff",
                 color: dark ? "#a78bfa" : "#7c3aed",
-                fontSize: "12px", cursor: "pointer", textAlign: "left", fontWeight: "500"
+                fontSize: "13px", cursor: "pointer", textAlign: "left", fontWeight: "500"
               }}>{s}</button>
             ))}
           </div>

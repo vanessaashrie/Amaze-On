@@ -70,7 +70,7 @@ export default function Settings() {
   return (
     <DashboardLayout>
       <div style={{ marginBottom: "24px" }}>
-        <h2 style={{ margin: "0 0 4px", fontSize: "22px", fontWeight: "700", color: text, display: "flex", alignItems: "center", gap: "10px" }}>
+        <h2 style={{ margin: "0 0 4px", fontSize: "26px", fontWeight: "700", color: text, display: "flex", alignItems: "center", gap: "10px" }}>
           <img src="/settings.png" alt="settings" style={{ width: "28px", height: "28px", objectFit: "contain" }} />
           Settings
         </h2>
@@ -81,7 +81,7 @@ export default function Settings() {
         <div>
           {/* Profile */}
           <div style={card}>
-            <h3 style={{ margin: "0 0 16px", fontSize: "17px", fontWeight: "600", color: text }}>👤 Profile</h3>
+            <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>👤 Profile</h3>
             <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "20px" }}>
               <div style={{ position: "relative", cursor: "pointer" }} onClick={() => fileInputRef.current?.click()}>
                 {(profilePhoto || user?.imageUrl) ? (
@@ -105,7 +105,7 @@ export default function Settings() {
                 />
               </div>
               <div>
-                <p style={{ margin: "0 0 2px", fontSize: "17px", fontWeight: "600", color: text }}>{user?.firstName} {user?.lastName}</p>
+                <p style={{ margin: "0 0 2px", fontSize: "18px", fontWeight: "600", color: text }}>{user?.firstName} {user?.lastName}</p>
                 <p style={{ margin: 0, fontSize: "14px", color: muted }}>{user?.primaryEmailAddress?.emailAddress}</p>
               </div>
             </div>
@@ -126,7 +126,7 @@ export default function Settings() {
 
           {/* Budget */}
           <div style={card}>
-            <h3 style={{ margin: "0 0 16px", fontSize: "17px", fontWeight: "600", color: text }}>💰 Budget Settings</h3>
+            <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>💰 Budget Settings</h3>
             <label style={{ fontSize: "14px", color: muted, display: "block", marginBottom: "8px" }}>Monthly Budget (₹)</label>
             <div style={{ display: "flex", gap: "10px" }}>
               <input value={budget} onChange={e => setBudget(e.target.value)} style={{ ...inputStyle, flex: 1 }} />
@@ -138,7 +138,7 @@ export default function Settings() {
         <div>
           {/* Appearance */}
           <div style={card}>
-            <h3 style={{ margin: "0 0 16px", fontSize: "17px", fontWeight: "600", color: text }}>🎨 Appearance</h3>
+            <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>🎨 Appearance</h3>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <div>
                 <p style={{ margin: "0 0 2px", fontSize: "15px", fontWeight: "500", color: text }}>Dark Mode</p>
@@ -150,7 +150,7 @@ export default function Settings() {
 
           {/* Notifications */}
           <div style={card}>
-            <h3 style={{ margin: "0 0 16px", fontSize: "17px", fontWeight: "600", color: text }}>🔔 Notifications</h3>
+            <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>🔔 Notifications</h3>
             {[
               { key: "daily", label: "Daily Summary", sub: "Get a daily recap every evening" },
               { key: "budget", label: "Budget Alerts", sub: "Alert when spending exceeds limit" },

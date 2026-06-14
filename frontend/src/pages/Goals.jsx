@@ -24,7 +24,7 @@ export default function Goals() {
 
   const card = {
     background: dark ? "#1a1a2e" : "#ffffff",
-    borderRadius: "16px", padding: "20px",
+    borderRadius: "16px", padding: "24px",
     border: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`,
   };
   const text = dark ? "#f1f5f9" : "#1f2937";
@@ -33,7 +33,7 @@ export default function Goals() {
     width: "100%", padding: "10px 14px", borderRadius: "10px",
     border: `1.5px solid ${dark ? "#2d2d44" : "#e5e7eb"}`,
     background: dark ? "#0f0f1a" : "#f9fafb",
-    color: text, fontSize: "13px", outline: "none", boxSizing: "border-box",
+    color: text, fontSize: "14px", outline: "none", boxSizing: "border-box",
   };
 
   useEffect(() => {
@@ -96,43 +96,43 @@ export default function Goals() {
     <DashboardLayout>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
         <div>
-          <h2 style={{ margin: "0 0 4px", fontSize: "22px", fontWeight: "700", color: text, display: "flex", alignItems: "center", gap: "10px" }}>
+          <h2 style={{ margin: "0 0 4px", fontSize: "26px", fontWeight: "700", color: text, display: "flex", alignItems: "center", gap: "10px" }}>
             <img src="/goals.png" alt="goals" style={{ width: "32px", height: "32px", objectFit: "contain" }} />
             Goals
           </h2>
-          <p style={{ margin: 0, fontSize: "14px", color: muted }}>Set, track and achieve your personal goals.</p>
+          <p style={{ margin: 0, fontSize: "15px", color: muted }}>Set, track and achieve your personal goals.</p>
         </div>
         <button onClick={() => setShowForm(!showForm)} style={{
           padding: "10px 20px", borderRadius: "12px", border: "none",
-          background: "#7c3aed", color: "white", fontSize: "13px", fontWeight: "600", cursor: "pointer",
+          background: "#7c3aed", color: "white", fontSize: "14px", fontWeight: "600", cursor: "pointer",
         }}>+ New Goal</button>
       </div>
 
       {showForm && (
         <div style={{ ...card, marginBottom: "20px" }}>
-          <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>Add New Goal</h3>
+          <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>Add New Goal</h3>
           <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr auto", gap: "12px", alignItems: "end" }}>
             <div>
-              <label style={{ fontSize: "12px", color: muted, display: "block", marginBottom: "6px" }}>Goal Title</label>
+              <label style={{ fontSize: "13px", color: muted, display: "block", marginBottom: "6px" }}>Goal Title</label>
               <input placeholder="e.g. Save ₹5,000" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} style={inputStyle} />
             </div>
             <div>
-              <label style={{ fontSize: "12px", color: muted, display: "block", marginBottom: "6px" }}>Category</label>
+              <label style={{ fontSize: "13px", color: muted, display: "block", marginBottom: "6px" }}>Category</label>
               <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} style={inputStyle}>
                 {["Finance", "Health", "Learning", "Skills", "Personal"].map(c => <option key={c}>{c}</option>)}
               </select>
             </div>
             <div>
-              <label style={{ fontSize: "12px", color: muted, display: "block", marginBottom: "6px" }}>Target</label>
+              <label style={{ fontSize: "13px", color: muted, display: "block", marginBottom: "6px" }}>Target</label>
               <input placeholder="e.g. 5000" type="number" value={form.target} onChange={e => setForm({ ...form, target: e.target.value })} style={inputStyle} />
             </div>
             <div>
-              <label style={{ fontSize: "12px", color: muted, display: "block", marginBottom: "6px" }}>Due Date</label>
+              <label style={{ fontSize: "13px", color: muted, display: "block", marginBottom: "6px" }}>Due Date</label>
               <input type="date" value={form.due_date} onChange={e => setForm({ ...form, due_date: e.target.value })} style={inputStyle} />
             </div>
             <button onClick={addGoal} disabled={loading} style={{
               padding: "10px 20px", borderRadius: "10px", border: "none",
-              background: "#7c3aed", color: "white", fontSize: "13px", fontWeight: "600", cursor: "pointer",
+              background: "#7c3aed", color: "white", fontSize: "14px", fontWeight: "600", cursor: "pointer",
             }}>{loading ? "Adding..." : "Add"}</button>
           </div>
         </div>
@@ -155,7 +155,7 @@ export default function Goals() {
                   </div>
                   <div>
                     <p style={{ margin: "0 0 2px", fontSize: "15px", fontWeight: "600", color: text }}>{goal.title}</p>
-                    <p style={{ margin: 0, fontSize: "12px", color: muted }}>{goal.category} · Due {goal.due_date || "—"}</p>
+                    <p style={{ margin: 0, fontSize: "13px", color: muted }}>{goal.category} · Due {goal.due_date || "—"}</p>
                   </div>
                 </div>
                 <span style={{ fontSize: "18px", fontWeight: "700", color }}>{progress}%</span>
@@ -179,7 +179,7 @@ export default function Goals() {
                     onClick={() => updateGoal(goal)}
                     style={{
                       padding: "6px 14px", borderRadius: "8px", border: `1px solid ${color}`,
-                      background: "transparent", color, fontSize: "12px", fontWeight: "500", cursor: "pointer",
+                      background: "transparent", color, fontSize: "13px", fontWeight: "500", cursor: "pointer",
                     }}>Update</button>
                 </div>
               </div>
@@ -189,9 +189,9 @@ export default function Goals() {
       </div>
 
       <div style={card}>
-        <h3 style={{ margin: "0 0 16px", fontSize: "16px", fontWeight: "600", color: text }}>🏆 Completed Goals</h3>
+        <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>🏆 Completed Goals</h3>
         {completedGoals.length === 0 && (
-          <p style={{ fontSize: "14px", color: muted }}>No completed goals yet. Keep going!</p>
+          <p style={{ fontSize: "15px", color: muted }}>No completed goals yet. Keep going!</p>
         )}
         {completedGoals.map((goal) => (
           <div key={goal.goal_id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px 0", borderBottom: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}` }}>
@@ -199,8 +199,8 @@ export default function Goals() {
               <img src="/goals.png" alt="goal" style={{ width: "22px", height: "22px", objectFit: "contain" }} />
             </div>
             <div style={{ flex: 1 }}>
-              <p style={{ margin: "0 0 2px", fontSize: "14px", fontWeight: "500", color: text }}>{goal.title}</p>
-              <p style={{ margin: 0, fontSize: "12px", color: muted }}>Completed · {goal.due_date || "—"}</p>
+              <p style={{ margin: "0 0 2px", fontSize: "15px", fontWeight: "500", color: text }}>{goal.title}</p>
+              <p style={{ margin: 0, fontSize: "13px", color: muted }}>Completed · {goal.due_date || "—"}</p>
             </div>
             <span style={{ fontSize: "18px" }}>✅</span>
           </div>

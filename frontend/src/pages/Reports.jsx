@@ -24,7 +24,7 @@ export default function Reports() {
 
   const card = {
     background: dark ? "#1a1a2e" : "#ffffff",
-    borderRadius: "16px", padding: "20px",
+    borderRadius: "16px", padding: "24px",
     border: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`,
   };
   const text = dark ? "#f1f5f9" : "#1f2937";
@@ -33,11 +33,11 @@ export default function Reports() {
   return (
     <DashboardLayout>
       <div style={{ marginBottom: "24px" }}>
-        <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700", color: text, display: "flex", alignItems: "center", gap: "10px" }}>
+        <h2 style={{ margin: "0 0 4px", fontSize: "26px", fontWeight: "700", color: text, display: "flex", alignItems: "center", gap: "10px" }}>
           <img src="/reports.png" alt="reports" style={{ width: "32px", height: "32px", objectFit: "contain" }} />
           Reports
         </h2>
-        <p style={{ margin: 0, fontSize: "13px", color: muted }}>Your monthly overview of finances, health and wellness.</p>
+        <p style={{ margin: 0, fontSize: "15px", color: muted }}>Your monthly overview of finances, health and wellness.</p>
       </div>
 
       {/* Summary Cards */}
@@ -50,18 +50,18 @@ export default function Reports() {
         ].map(({ label, value, change, up, icon }) => (
           <div key={label} style={card}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
-              <p style={{ margin: 0, fontSize: "12px", color: muted }}>{label}</p>
+              <p style={{ margin: 0, fontSize: "13px", color: muted }}>{label}</p>
               <span style={{ fontSize: "18px" }}>{icon}</span>
             </div>
-            <p style={{ margin: "0 0 6px", fontSize: "22px", fontWeight: "700", color: text }}>{value}</p>
-            <p style={{ margin: 0, fontSize: "11px", color: up ? "#10b981" : "#ef4444" }}>{change} vs last month</p>
+            <p style={{ margin: "0 0 6px", fontSize: "28px", fontWeight: "700", color: text }}>{value}</p>
+            <p style={{ margin: 0, fontSize: "13px", color: up ? "#10b981" : "#ef4444" }}>{change} vs last month</p>
           </div>
         ))}
       </div>
 
       <div className="responsive-grid-2-1" style={{ marginBottom: "20px" }}>
         <div style={card}>
-          <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>Spending vs Saving Trend</h3>
+          <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>Spending vs Saving Trend</h3>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={monthlyData}>
               <XAxis dataKey="month" tick={{ fontSize: 11, fill: muted }} axisLine={false} tickLine={false} />
@@ -74,7 +74,7 @@ export default function Reports() {
         </div>
 
         <div style={card}>
-          <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>Wellness Score</h3>
+          <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>Wellness Score</h3>
           <ResponsiveContainer width="100%" height={200}>
             <RadarChart data={radarData}>
               <PolarGrid stroke={dark ? "#2d2d44" : "#e5e7eb"} />
@@ -86,7 +86,7 @@ export default function Reports() {
       </div>
 
       <div style={card}>
-        <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>🤖 AI Monthly Insights</h3>
+        <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>🤖 AI Monthly Insights</h3>
         <div className="responsive-grid-3" style={{}}>
           {[
             { icon: "💰", title: "Spending Alert", msg: "You spent 28% more on food this month. Consider meal prepping to save ₹800+.", color: "#f97316" },
@@ -96,9 +96,9 @@ export default function Reports() {
             <div key={title} style={{ padding: "16px", borderRadius: "12px", background: color + "15", border: `1px solid ${color}30` }}>
               <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
                 <span style={{ fontSize: "18px" }}>{icon}</span>
-                <p style={{ margin: 0, fontSize: "13px", fontWeight: "600", color: text }}>{title}</p>
+                <p style={{ margin: 0, fontSize: "15px", fontWeight: "600", color: text }}>{title}</p>
               </div>
-              <p style={{ margin: 0, fontSize: "12px", color: muted, lineHeight: "1.6" }}>{msg}</p>
+              <p style={{ margin: 0, fontSize: "13px", color: muted, lineHeight: "1.6" }}>{msg}</p>
             </div>
           ))}
         </div>

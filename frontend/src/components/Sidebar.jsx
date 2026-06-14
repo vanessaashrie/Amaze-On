@@ -72,7 +72,7 @@ export default function Sidebar({ onClose }) {
               marginBottom: "4px",
               background: active ? activeBg : "transparent",
               color: active ? activeColor : textColor,
-              fontWeight: active ? "600" : "400", fontSize: "15px",
+              fontWeight: active ? "600" : "400", fontSize: "16px",
               transition: "all 0.2s"
             }}>
               <img
@@ -108,7 +108,7 @@ export default function Sidebar({ onClose }) {
               style={{
                 width: "100%", padding: "10px 14px", borderRadius: "8px",
                 border: "none", background: dark ? "#2d2d44" : "#f5f3ff",
-                color: dark ? "#a78bfa" : "#7c3aed", fontSize: "13px", fontWeight: "600",
+                color: dark ? "#a78bfa" : "#7c3aed", fontSize: "14px", fontWeight: "600",
                 cursor: "pointer", textAlign: "left",
                 display: "flex", alignItems: "center", gap: "8px",
                 transition: "background 0.2s"

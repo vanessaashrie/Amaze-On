@@ -25,7 +25,7 @@ export default function Journal() {
   const card = {
     background: dark ? "#1a1a2e" : "#ffffff",
     borderRadius: "16px",
-    padding: "20px",
+    padding: "24px",
     border: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`,
   };
 
@@ -71,11 +71,11 @@ export default function Journal() {
   return (
     <DashboardLayout>
       <div style={{ marginBottom: "24px" }}>
-        <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700", color: text, display: "flex", alignItems: "center", gap: "10px" }}>
+        <h2 style={{ margin: "0 0 4px", fontSize: "26px", fontWeight: "700", color: text, display: "flex", alignItems: "center", gap: "10px" }}>
           <img src="/journal.png" alt="journal" style={{ width: "32px", height: "32px", objectFit: "contain" }} />
           My Journal
         </h2>
-        <p style={{ margin: 0, fontSize: "13px", color: muted }}>
+        <p style={{ margin: 0, fontSize: "15px", color: muted }}>
           Write your thoughts and track your mood.
         </p>
       </div>
@@ -83,10 +83,10 @@ export default function Journal() {
       <div className="responsive-grid-2-1">
 
         {/* LEFT SIDE */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
 
           <div style={card}>
-            <h3 style={{ marginBottom: "14px", fontSize: "14px", color: text }}>
+            <h3 style={{ marginBottom: "14px", fontSize: "18px", color: text }}>
               How are you feeling today?
             </h3>
             <div style={{ display: "flex", gap: "10px" }}>
@@ -105,14 +105,14 @@ export default function Journal() {
                   }}
                 >
                   <div style={{ fontSize: "22px" }}>{m.emoji}</div>
-                  <div style={{ fontSize: "11px", color: muted }}>{m.label}</div>
+                  <div style={{ fontSize: "13px", color: muted }}>{m.label}</div>
                 </div>
               ))}
             </div>
           </div>
 
           <div style={card}>
-            <h3 style={{ marginBottom: "10px", fontSize: "14px", color: text }}>
+            <h3 style={{ marginBottom: "10px", fontSize: "18px", color: text }}>
               Write your thoughts
             </h3>
             <textarea
@@ -153,7 +153,7 @@ export default function Journal() {
         </div>
 
         {/* RIGHT SIDE */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
 
           <div style={card}>
             <h3 style={{ color: text }}>🔥 Streak</h3>
@@ -167,13 +167,13 @@ export default function Journal() {
             )}
             {pastEntries.map((e) => (
               <div key={e.entry_id} style={{ marginBottom: "12px" }}>
-                <div style={{ fontSize: "11px", color: muted }}>
+                <div style={{ fontSize: "13px", color: muted }}>
                   {new Date(e.timestamp).toLocaleDateString("en-IN", {
                     day: "numeric", month: "short", year: "numeric"
                   })}
                 </div>
                 <div style={{ fontWeight: "600", color: text }}>{e.mood}</div>
-                <div style={{ fontSize: "11px", color: muted }}>
+                <div style={{ fontSize: "13px", color: muted }}>
                   {e.text?.slice(0, 80)}...
                 </div>
               </div>

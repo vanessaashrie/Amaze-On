@@ -29,7 +29,7 @@ export default function DashboardLayout({ children }) {
                 top: 0, bottom: 0,
                 zIndex: 50,
                 transition: "left 0.3s ease",
-                width: isMobile ? "240px" : isTablet ? "180px" : "200px",
+                width: isMobile ? "240px" : isTablet ? "200px" : "220px",
                 flexShrink: 0,
             }}>
                 <Sidebar onClose={() => setSidebarOpen(false)} />

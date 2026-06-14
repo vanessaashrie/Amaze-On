@@ -33,11 +33,11 @@ export default function TopBar({ onMenuClick, showMenu }) {
         )}
         <div style={{ width: isMobile ? "32px" : "40px", height: isMobile ? "32px" : "40px", borderRadius: "50%", background: "#b8f5d0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: isMobile ? "16px" : "20px" }}>🌱</div>
         <div>
-          <h2 style={{ margin: 0, fontSize: isMobile ? "14px" : "16px", fontWeight: "700", color: dark ? "#f1f5f9" : "#1f2937" }}>
+          <h2 style={{ margin: 0, fontSize: isMobile ? "14px" : "18px", fontWeight: "700", color: dark ? "#f1f5f9" : "#1f2937" }}>
             {getGreeting()}, {user?.firstName || "Ayushi"}! 🔥
           </h2>
           {!isMobile && (
-            <p style={{ margin: 0, fontSize: "12px", color: dark ? "#94a3b8" : "#6b7280" }}>
+            <p style={{ margin: 0, fontSize: "14px", color: dark ? "#94a3b8" : "#6b7280" }}>
               Here's what's happening in your life today.
             </p>
           )}
@@ -48,7 +48,7 @@ export default function TopBar({ onMenuClick, showMenu }) {
         padding: isMobile ? "6px 12px" : "8px 16px", borderRadius: "20px", border: "none", cursor: "pointer",
         background: dark ? "#2d2d44" : "#f5f3ff",
         color: dark ? "#f1f5f9" : "#7c3aed",
-        fontSize: isMobile ? "12px" : "13px", fontWeight: "600"
+        fontSize: isMobile ? "13px" : "14px", fontWeight: "600"
       }}>
         {dark ? "☀️ Light" : "🌙 Dark"}
       </button>

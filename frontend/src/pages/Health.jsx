@@ -35,7 +35,7 @@ export default function Health() {
 
   const card = {
     background: dark ? "#1a1a2e" : "#ffffff",
-    borderRadius: "16px", padding: "20px",
+    borderRadius: "16px", padding: "24px",
     border: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`,
   };
   const text = dark ? "#f1f5f9" : "#1f2937";
@@ -109,8 +109,8 @@ export default function Health() {
   return (
     <DashboardLayout>
       <div style={{ marginBottom: "24px" }}>
-        <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700", color: text }}>❤️ Health Tracker</h2>
-        <p style={{ margin: 0, fontSize: "13px", color: muted }}>Monitor your sleep, hydration, steps and wellness.</p>
+        <h2 style={{ margin: "0 0 4px", fontSize: "26px", fontWeight: "700", color: text }}>❤️ Health Tracker</h2>
+        <p style={{ margin: 0, fontSize: "15px", color: muted }}>Monitor your sleep, hydration, steps and wellness.</p>
       </div>
 
       {/* Stat Cards */}
@@ -123,20 +123,20 @@ export default function Health() {
         ].map(({ label, value, sub, icon, color }) => (
           <div key={label} style={card}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
-              <p style={{ margin: 0, fontSize: "12px", color: muted }}>{label}</p>
+              <p style={{ margin: 0, fontSize: "13px", color: muted }}>{label}</p>
               <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: color + "20", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>{icon}</div>
             </div>
-            <p style={{ margin: "0 0 4px", fontSize: "22px", fontWeight: "700", color: text }}>{value}</p>
-            <p style={{ margin: 0, fontSize: "11px", color: muted }}>{sub}</p>
+            <p style={{ margin: "0 0 4px", fontSize: "28px", fontWeight: "700", color: text }}>{value}</p>
+            <p style={{ margin: 0, fontSize: "13px", color: muted }}>{sub}</p>
           </div>
         ))}
       </div>
 
       <div className="responsive-grid-2" style={{ marginBottom: "20px" }}>
         <div style={card}>
-          <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>Sleep This Week</h3>
+          <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>Sleep This Week</h3>
           {sleepData.length === 0 ? (
-            <p style={{ fontSize: "13px", color: muted }}>No data yet.</p>
+            <p style={{ fontSize: "15px", color: muted }}>No data yet.</p>
           ) : (
             <ResponsiveContainer width="100%" height={180}>
               <BarChart data={sleepData}>
@@ -150,9 +150,9 @@ export default function Health() {
         </div>
 
         <div style={card}>
-          <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>Daily Steps</h3>
+          <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>Daily Steps</h3>
           {stepsData.length === 0 ? (
-            <p style={{ fontSize: "13px", color: muted }}>No data yet.</p>
+            <p style={{ fontSize: "15px", color: muted }}>No data yet.</p>
           ) : (
             <ResponsiveContainer width="100%" height={180}>
               <LineChart data={stepsData}>
@@ -170,7 +170,7 @@ export default function Health() {
 
         {/* Water Tracker */}
         <div style={card}>
-          <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>💧 Water Intake</h3>
+          <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>💧 Water Intake</h3>
           <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "16px" }}>
             {Array.from({ length: waterGoal }).map((_, i) => (
               <div
@@ -184,15 +184,15 @@ export default function Health() {
               >💧</div>
             ))}
           </div>
-          <p style={{ margin: 0, fontSize: "13px", color: muted }}>
+          <p style={{ margin: 0, fontSize: "15px", color: muted }}>
             {waterCount} of {waterGoal} glasses · {Math.max(0, waterGoal - waterCount)} more to go!
           </p>
-          {saving && <p style={{ fontSize: "11px", color: muted, marginTop: "8px" }}>Saving...</p>}
+          {saving && <p style={{ fontSize: "13px", color: muted, marginTop: "8px" }}>Saving...</p>}
         </div>
 
         {/* Habits */}
         <div style={card}>
-          <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>Today's Habits</h3>
+          <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>Today's Habits</h3>
           {Object.entries(HABIT_LABELS).map(([key, { label, icon }]) => (
             <div
               key={key}
@@ -203,7 +203,7 @@ export default function Health() {
               }}
             >
               <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: habits[key] ? "#10b98120" : dark ? "#2d2d44" : "#f3f4f6", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>{icon}</div>
-              <span style={{ flex: 1, fontSize: "13px", color: habits[key] ? text : muted, fontWeight: habits[key] ? "500" : "400" }}>{label}</span>
+              <span style={{ flex: 1, fontSize: "15px", color: habits[key] ? text : muted, fontWeight: habits[key] ? "500" : "400" }}>{label}</span>
               <div style={{ width: "20px", height: "20px", borderRadius: "50%", background: habits[key] ? "#10b981" : dark ? "#2d2d44" : "#e5e7eb", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "10px", color: "white" }}>
                 {habits[key] ? "✓" : ""}
               </div>

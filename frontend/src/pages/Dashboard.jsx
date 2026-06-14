@@ -79,7 +79,7 @@ export default function Dashboard() {
   const card = {
     background: dark ? "#1a1a2e" : "#ffffff",
     borderRadius: "16px",
-    padding: "20px",
+    padding: "24px",
     border: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`,
   };
 
@@ -99,16 +99,16 @@ export default function Dashboard() {
     <DashboardLayout>
       {/* HEADER */}
       <div style={{ marginBottom: "20px" }}>
-        <h2 style={{ margin: 0, fontSize: "20px", color: text }}>
+        <h2 style={{ margin: 0, fontSize: "26px", color: text }}>
           Hey {displayName} 👋
         </h2>
 
-        <p style={{ margin: 0, fontSize: "13px", color: muted }}>
+        <p style={{ margin: 0, fontSize: "15px", color: muted }}>
           {friendName} is here — your life snapshot for today.
         </p>
 
         {error && (
-          <p style={{ color: "#f59e0b", fontSize: "12px" }}>
+          <p style={{ color: "#f59e0b", fontSize: "13px" }}>
             {error}
           </p>
         )}
@@ -124,15 +124,15 @@ export default function Dashboard() {
         ].map((item) => (
           <div key={item.label} style={card}>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <p style={{ fontSize: "12px", color: muted }}>{item.label}</p>
+              <p style={{ fontSize: "13px", color: muted }}>{item.label}</p>
               <span>{item.icon}</span>
             </div>
 
-            <h3 style={{ margin: "8px 0", color: text }}>
+            <h3 style={{ margin: "8px 0", color: text, fontSize: "28px" }}>
               {item.value}
             </h3>
 
-            <p style={{ fontSize: "11px", color: muted }}>
+            <p style={{ fontSize: "13px", color: muted }}>
               {item.sub}
             </p>
           </div>
@@ -141,7 +141,7 @@ export default function Dashboard() {
 
       {/* CHART */}
       <div style={card}>
-        <h3 style={{ color: text }}>Spending Trend</h3>
+        <h3 style={{ color: text, fontSize: "18px" }}>Spending Trend</h3>
 
         <ResponsiveContainer width="100%" height={150}>
           <LineChart data={spendingData}>
@@ -159,8 +159,8 @@ export default function Dashboard() {
       </div>
 
       {/* TRANSACTIONS */}
-      <div style={{ ...card, marginTop: "16px" }}>
-        <h3 style={{ color: text }}>Recent Transactions</h3>
+      <div style={{ ...card, marginTop: "20px" }}>
+        <h3 style={{ color: text, fontSize: "18px" }}>Recent Transactions</h3>
 
         {[
           { name: "Swiggy", amount: "-₹320" },

@@ -29,7 +29,7 @@ export default function Money() {
   const card = {
     background: dark ? "#1a1a2e" : "#ffffff",
     borderRadius: "16px",
-    padding: "20px",
+    padding: "24px",
     border: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`,
   };
 
@@ -39,7 +39,7 @@ export default function Money() {
     width: "100%", padding: "10px 14px", borderRadius: "10px",
     border: `1.5px solid ${dark ? "#2d2d44" : "#e5e7eb"}`,
     background: dark ? "#0f0f1a" : "#f9fafb",
-    color: text, fontSize: "13px", outline: "none", boxSizing: "border-box",
+    color: text, fontSize: "14px", outline: "none", boxSizing: "border-box",
   };
 
   useEffect(() => {
@@ -95,38 +95,38 @@ export default function Money() {
     <DashboardLayout>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
         <div>
-          <h2 style={{ margin: "0 0 4px", fontSize: "20px", fontWeight: "700", color: text, display: "flex", alignItems: "center", gap: "10px" }}>
+          <h2 style={{ margin: "0 0 4px", fontSize: "26px", fontWeight: "700", color: text, display: "flex", alignItems: "center", gap: "10px" }}>
             <img src="/money.png" alt="money" style={{ width: "32px", height: "32px", objectFit: "contain" }} />
             Money Tracker
           </h2>
-          <p style={{ margin: 0, fontSize: "13px", color: muted }}>Track your income, expenses and budget.</p>
+          <p style={{ margin: 0, fontSize: "15px", color: muted }}>Track your income, expenses and budget.</p>
         </div>
         <button onClick={() => setShowForm(!showForm)} style={{
           padding: "10px 20px", borderRadius: "12px", border: "none",
-          background: "#7c3aed", color: "white", fontSize: "13px", fontWeight: "600", cursor: "pointer",
+          background: "#7c3aed", color: "white", fontSize: "14px", fontWeight: "600", cursor: "pointer",
         }}>+ Add Transaction</button>
       </div>
 
       {showForm && (
         <div style={{ ...card, marginBottom: "20px" }}>
-          <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>New Transaction</h3>
+          <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>New Transaction</h3>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr 1fr auto", gap: "12px", alignItems: "end" }}>
             <div>
-              <label style={{ fontSize: "12px", color: muted, display: "block", marginBottom: "6px" }}>Description</label>
+              <label style={{ fontSize: "13px", color: muted, display: "block", marginBottom: "6px" }}>Description</label>
               <input placeholder="e.g. Swiggy" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} style={inputStyle} />
             </div>
             <div>
-              <label style={{ fontSize: "12px", color: muted, display: "block", marginBottom: "6px" }}>Amount (₹)</label>
+              <label style={{ fontSize: "13px", color: muted, display: "block", marginBottom: "6px" }}>Amount (₹)</label>
               <input placeholder="0" type="number" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} style={inputStyle} />
             </div>
             <div>
-              <label style={{ fontSize: "12px", color: muted, display: "block", marginBottom: "6px" }}>Category</label>
+              <label style={{ fontSize: "13px", color: muted, display: "block", marginBottom: "6px" }}>Category</label>
               <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} style={inputStyle}>
                 {["Food", "Transport", "Shopping", "Education", "Entertainment", "Others"].map(c => <option key={c}>{c}</option>)}
               </select>
             </div>
             <div>
-              <label style={{ fontSize: "12px", color: muted, display: "block", marginBottom: "6px" }}>Type</label>
+              <label style={{ fontSize: "13px", color: muted, display: "block", marginBottom: "6px" }}>Type</label>
               <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} style={inputStyle}>
                 <option value="expense">Expense</option>
                 <option value="income">Income</option>
@@ -134,7 +134,7 @@ export default function Money() {
             </div>
             <button onClick={handleSave} disabled={loading} style={{
               padding: "10px 20px", borderRadius: "10px", border: "none",
-              background: "#7c3aed", color: "white", fontSize: "13px", fontWeight: "600", cursor: "pointer",
+              background: "#7c3aed", color: "white", fontSize: "14px", fontWeight: "600", cursor: "pointer",
             }}>{loading ? "Saving..." : "Save"}</button>
           </div>
         </div>
@@ -149,17 +149,17 @@ export default function Money() {
         ].map(({ label, value, icon, color }) => (
           <div key={label} style={card}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
-              <p style={{ margin: 0, fontSize: "12px", color: muted }}>{label}</p>
+              <p style={{ margin: 0, fontSize: "13px", color: muted }}>{label}</p>
               <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: color + "20", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>{icon}</div>
             </div>
-            <p style={{ margin: 0, fontSize: "22px", fontWeight: "700", color: text }}>{value}</p>
+            <p style={{ margin: 0, fontSize: "28px", fontWeight: "700", color: text }}>{value}</p>
           </div>
         ))}
       </div>
 
       <div className="responsive-grid-2" style={{ marginBottom: "20px" }}>
         <div style={card}>
-          <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>Spending Breakdown</h3>
+          <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>Spending Breakdown</h3>
           {pieData.length === 0 ? (
             <p style={{ fontSize: "13px", color: muted }}>No expenses yet.</p>
           ) : (
@@ -177,9 +177,9 @@ export default function Money() {
                   <div key={name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                       <div style={{ width: "10px", height: "10px", borderRadius: "50%", background: color }} />
-                      <span style={{ fontSize: "12px", color: muted }}>{name}</span>
+                      <span style={{ fontSize: "13px", color: muted }}>{name}</span>
                     </div>
-                    <span style={{ fontSize: "12px", fontWeight: "600", color: text }}>₹{value}</span>
+                    <span style={{ fontSize: "13px", fontWeight: "600", color: text }}>₹{value}</span>
                   </div>
                 ))}
               </div>
@@ -188,17 +188,17 @@ export default function Money() {
         </div>
 
         <div style={card}>
-          <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>Recent Activity</h3>
+          <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>Recent Activity</h3>
           {transactions.slice(0, 5).map((t) => (
             <div key={t.transaction_id} style={{
               display: "flex", justifyContent: "space-between",
               padding: "8px 0", borderBottom: `1px solid ${dark ? "#2d2d44" : "#f3f4f6"}`,
             }}>
               <div>
-                <p style={{ margin: "0 0 2px", fontSize: "13px", fontWeight: "500", color: text }}>{t.name}</p>
-                <p style={{ margin: 0, fontSize: "11px", color: muted }}>{t.category}</p>
+                <p style={{ margin: "0 0 2px", fontSize: "15px", fontWeight: "500", color: text }}>{t.name}</p>
+                <p style={{ margin: 0, fontSize: "13px", color: muted }}>{t.category}</p>
               </div>
-              <p style={{ margin: 0, fontSize: "13px", fontWeight: "600", color: t.type === "expense" ? "#ef4444" : "#10b981" }}>
+              <p style={{ margin: 0, fontSize: "15px", fontWeight: "600", color: t.type === "expense" ? "#ef4444" : "#10b981" }}>
                 {t.type === "expense" ? "-" : "+"}₹{t.amount}
               </p>
             </div>
@@ -207,7 +207,7 @@ export default function Money() {
       </div>
 
       <div style={card}>
-        <h3 style={{ margin: "0 0 16px", fontSize: "14px", fontWeight: "600", color: text }}>All Transactions</h3>
+        <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>All Transactions</h3>
         {transactions.length === 0 && (
           <p style={{ fontSize: "13px", color: muted }}>No transactions yet.</p>
         )}
@@ -221,8 +221,8 @@ export default function Money() {
                 💸
               </div>
               <div>
-                <p style={{ margin: "0 0 2px", fontSize: "13px", fontWeight: "500", color: text }}>{t.name}</p>
-                <p style={{ margin: 0, fontSize: "11px", color: muted }}>{t.category} · {new Date(t.date).toLocaleDateString("en-IN")}</p>
+                <p style={{ margin: "0 0 2px", fontSize: "15px", fontWeight: "500", color: text }}>{t.name}</p>
+                <p style={{ margin: 0, fontSize: "13px", color: muted }}>{t.category} · {new Date(t.date).toLocaleDateString("en-IN")}</p>
               </div>
             </div>
             <p style={{ margin: 0, fontSize: "14px", fontWeight: "600", color: t.type === "expense" ? "#ef4444" : "#10b981" }}>
