@@ -3,8 +3,14 @@ import { createContext, useContext, useState } from "react";
 const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
-  const [dark, setDark] = useState(false);
-  const toggle = () => setDark(d => !d);
+  const [dark, setDark] = useState(() => localStorage.getItem("pocketBuddyDarkMode") === "true");
+  const toggle = () => {
+    setDark(d => {
+      const next = !d;
+      localStorage.setItem("pocketBuddyDarkMode", String(next));
+      return next;
+    });
+  };
   return (
     <ThemeContext.Provider value={{ dark, toggle }}>
       <div style={{
