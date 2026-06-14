@@ -202,7 +202,7 @@ Each table stores a different type of customer data in AWS DynamoDB (a cloud dat
 
 We followed the **Customer Backwards** principle throughout development:
 
-1. **Started with the customer pain point** — Not the technology. We interviewed students and identified their top struggles: fragmented tracking, no personal support, and app fatigue.
+1. **Started with the customer pain point** — Not the technology. We researched how students and young professionals manage their daily lives and identified their top struggles: fragmented tracking, no personal support, and app fatigue.
 2. **Designed the end-to-end customer experience first** — Before writing a single line of code, we mapped the ideal customer journey from sign-up to daily use.
 3. **Built features customers asked for** — Every feature (AI companion, money tracker, cycle predictor) came directly from customer feedback.
 4. **Measured success by customer outcomes** — Does the customer feel less stressed? Can they track their life in under 30 seconds? Is the AI actually helpful?
