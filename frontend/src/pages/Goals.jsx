@@ -18,7 +18,7 @@ export default function Goals() {
 
   const [goals, setGoals] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ title: "", category: "Finance", due_date: "", target: "" });
+  const [form, setForm] = useState({ title: "", category: "Finance", due_date: "" });
   const [loading, setLoading] = useState(false);
 
   const card = {
@@ -55,13 +55,13 @@ export default function Goals() {
         title: form.title,
         category: form.category,
         icon: "goals",
-        target: form.target.toString() || "100",
+        target: "100",
         current: "0",
         due_date: form.due_date,
       });
       await refreshGoals();
       setShowForm(false);
-      setForm({ title: "", category: "Finance", due_date: "", target: "" });
+      setForm({ title: "", category: "Finance", due_date: "" });
     } catch (err) {
       console.error("Failed to add goal:", err);
       alert("Failed to add goal");
@@ -72,15 +72,17 @@ export default function Goals() {
 
   const toggleDone = async (goal) => {
     try {
+      const newCompleted = !goal.is_completed;
       await api.post("/goals/update", {
         clerk_id: user.id,
         goal_id: goal.goal_id,
-        current: goal.is_completed ? "0" : goal.target,
-        is_completed: !goal.is_completed,
+        current: newCompleted ? String(goal.target || "100") : "0",
+        is_completed: newCompleted,
       });
       await refreshGoals();
     } catch (err) {
-      console.error("Failed to toggle goal:", err);
+      console.error("Failed to toggle goal:", err.response?.data || err.message);
+      alert("Failed to mark goal: " + (err.response?.data?.detail || err.message));
     }
   };
 
@@ -106,7 +108,7 @@ export default function Goals() {
       {showForm && (
         <div style={{ ...card, marginBottom: "20px" }}>
           <h3 style={{ margin: "0 0 16px", fontSize: "18px", fontWeight: "600", color: text }}>Add New Goal</h3>
-          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr auto", gap: "12px", alignItems: "end" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr auto", gap: "12px", alignItems: "end" }}>
             <div>
               <label style={{ fontSize: "13px", color: muted, display: "block", marginBottom: "6px" }}>Goal Title</label>
               <input placeholder="e.g. Save ₹5,000" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} style={inputStyle} />
@@ -118,12 +120,8 @@ export default function Goals() {
               </select>
             </div>
             <div>
-              <label style={{ fontSize: "13px", color: muted, display: "block", marginBottom: "6px" }}>Target</label>
-              <input placeholder="e.g. 5000" type="number" value={form.target} onChange={e => setForm({ ...form, target: e.target.value })} style={inputStyle} />
-            </div>
-            <div>
               <label style={{ fontSize: "13px", color: muted, display: "block", marginBottom: "6px" }}>Due Date</label>
-              <input type="date" value={form.due_date} onChange={e => setForm({ ...form, due_date: e.target.value })} style={inputStyle} />
+              <input type="date" value={form.due_date} onChange={e => setForm({ ...form, due_date: e.target.value })} style={{ ...inputStyle, minWidth: "140px" }} />
             </div>
             <button onClick={addGoal} disabled={loading} style={{
               padding: "10px 20px", borderRadius: "10px", border: "none",

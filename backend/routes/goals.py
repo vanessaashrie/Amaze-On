@@ -19,13 +19,19 @@ def list_goals(user_id: str):
 @router.patch("/update")
 @router.post("/update")
 def update_goal(data: GoalUpdateRequest):
-    # clerk_id from frontend maps to userId in DynamoDB
-    updated = update_goal_progress(
-        data.clerk_id,   # used directly as userId — matches DynamoDB partition key
-        data.goal_id,
-        data.current,
-        data.is_completed
-    )
-    if not updated:
-        raise HTTPException(status_code=404, detail="Goal not found")
-    return {"message": "Goal updated", "goal": updated}
+    """Update a goal's completion status."""
+    try:
+        updated = update_goal_progress(
+            data.clerk_id,
+            data.goal_id,
+            data.current,
+            data.is_completed
+        )
+        if not updated:
+            raise HTTPException(status_code=404, detail="Goal not found")
+        return {"message": "Goal updated", "goal": updated}
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"[GOALS] Update error for user={data.clerk_id}, goal={data.goal_id}: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
